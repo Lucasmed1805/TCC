@@ -22,12 +22,9 @@ interface AuthContextType {
 
 // ================== CONFIGURAÇÃO DO BACKEND ==================
 const getApiUrl = () => {
-  // Produção (Vercel)
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return `${process.env.NEXT_PUBLIC_API_URL}/api`;
+  if (import.meta.env.VITE_API_URL) {
+    return `${import.meta.env.VITE_API_URL}/api`;
   }
-  
-  // Desenvolvimento local
   return "http://localhost:3001/api";
 };
 
