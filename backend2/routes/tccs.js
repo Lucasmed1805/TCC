@@ -2,8 +2,8 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
-const { getDB } = require("../database/db");
-const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const { Tcc } = require("../database/models");
+const { adminMiddleware } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -25,78 +25,60 @@ const upload = multer({
   },
 });
 
-// GET /api/tccs
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const { curso, tipo, q } = req.query;
-  const db = getDB();
+  let query = {};
 
-  let tccs = db.get("tccs").value();
-
-  if (curso) tccs = tccs.filter((t) => t.curso === curso);
-  if (tipo) tccs = tccs.filter((t) => t.tipo === tipo);
+  if (curso) query.curso = curso;
+  if (tipo) query.tipo = tipo;
   if (q) {
-    const query = q.toLowerCase();
-    tccs = tccs.filter(
-      (t) =>
-        t.titulo.toLowerCase().includes(query) ||
-        t.autor.toLowerCase().includes(query) ||
-        (t.resumo && t.resumo.toLowerCase().includes(query))
-    );
+    query.$or = [
+      { titulo: { $regex: q, $options: "i" } },
+      { autor: { $regex: q, $options: "i" } },
+      { resumo: { $regex: q, $options: "i" } },
+    ];
   }
 
-  tccs = tccs.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+  const tccs = await Tcc.find(query).sort({ createdAt: -1 });
   res.json(tccs);
 });
 
-// GET /api/tccs/:id
-router.get("/:id", (req, res) => {
-  const db = getDB();
-  const tcc = db.get("tccs").find({ id: req.params.id }).value();
+router.get("/:id", async (req, res) => {
+  const tcc = await Tcc.findById(req.params.id);
   if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
 
-  db.get("tccs").find({ id: req.params.id }).assign({ visualizacoes: (tcc.visualizacoes || 0) + 1 }).write();
-
-  res.json({ ...tcc, visualizacoes: (tcc.visualizacoes || 0) + 1 });
+  tcc.visualizacoes = (tcc.visualizacoes || 0) + 1;
+  await tcc.save();
+  res.json(tcc);
 });
 
-// POST /api/tccs (admin)
-router.post("/", adminMiddleware, upload.single("arquivo"), (req, res) => {
+router.post("/", adminMiddleware, upload.single("arquivo"), async (req, res) => {
   const { titulo, autor, curso, ano, resumo, tipo } = req.body;
-
   if (!titulo || !autor || !curso || !ano)
     return res.status(400).json({ error: "Preencha os campos obrigatórios." });
 
-  const db = getDB();
-  const id = uuidv4();
   const arquivo_url = req.file ? `/uploads/${req.file.filename}` : null;
 
-  const novoTcc = {
-    id, titulo, autor, curso,
+  const tcc = await Tcc.create({
+    titulo, autor, curso,
     ano: parseInt(ano),
     resumo: resumo || "",
     tipo: tipo || "tcc",
     arquivo_url,
     usuario_id: req.user.id,
-    downloads: 0,
-    visualizacoes: 0,
-    criado_em: new Date().toISOString(),
-  };
+  });
 
-  db.get("tccs").push(novoTcc).write();
-  res.status(201).json(novoTcc);
+  res.status(201).json(tcc);
 });
 
-// PUT /api/tccs/:id (admin)
-router.put("/:id", adminMiddleware, upload.single("arquivo"), (req, res) => {
+router.put("/:id", adminMiddleware, upload.single("arquivo"), async (req, res) => {
   const { titulo, autor, curso, ano, resumo, tipo } = req.body;
-  const db = getDB();
-
-  const tcc = db.get("tccs").find({ id: req.params.id }).value();
+  const tcc = await Tcc.findById(req.params.id);
   if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
 
   const arquivo_url = req.file ? `/uploads/${req.file.filename}` : tcc.arquivo_url;
 
-  db.get("tccs").find({ id: req.params.id }).assign({
+  Object.assign(tcc, {
     titulo: titulo || tcc.titulo,
     autor: autor || tcc.autor,
     curso: curso || tcc.curso,
@@ -104,27 +86,25 @@ router.put("/:id", adminMiddleware, upload.single("arquivo"), (req, res) => {
     resumo: resumo ?? tcc.resumo,
     tipo: tipo || tcc.tipo,
     arquivo_url,
-  }).write();
+  });
 
-  res.json(db.get("tccs").find({ id: req.params.id }).value());
+  await tcc.save();
+  res.json(tcc);
 });
 
-// DELETE /api/tccs/:id (admin)
-router.delete("/:id", adminMiddleware, (req, res) => {
-  const db = getDB();
-  const tcc = db.get("tccs").find({ id: req.params.id }).value();
+router.delete("/:id", adminMiddleware, async (req, res) => {
+  const tcc = await Tcc.findById(req.params.id);
   if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
 
-  db.get("tccs").remove({ id: req.params.id }).write();
+  await Tcc.findByIdAndDelete(req.params.id);
   res.json({ message: "TCC removido com sucesso." });
 });
 
-// POST /api/tccs/:id/download
-router.post("/:id/download", (req, res) => {
-  const db = getDB();
-  const tcc = db.get("tccs").find({ id: req.params.id }).value();
+router.post("/:id/download", async (req, res) => {
+  const tcc = await Tcc.findById(req.params.id);
   if (tcc) {
-    db.get("tccs").find({ id: req.params.id }).assign({ downloads: (tcc.downloads || 0) + 1 }).write();
+    tcc.downloads = (tcc.downloads || 0) + 1;
+    await tcc.save();
   }
   res.json({ ok: true });
 });
