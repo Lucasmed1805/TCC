@@ -1,0 +1,37 @@
+{
+  "usuarios": [
+    {
+      "id": "fd905381-ea65-4b87-abe1-884440d95ec7",
+      "nome": "Administrador Lucas",
+      "email": "admin@ceep.com",
+      "senha_hash": "$2a$10$O1C6dItRkaH7L02hz6NhR.WyXxge/rhD.MAYeCOnmH9CyfiAAJjIW",
+      "role": "super_admin",
+      "criado_em": "2026-04-19T22:51:22.811Z"
+    },
+    {
+      "id": "06b1e529-13aa-441e-8a91-e215a1dda575",
+      "nome": "Victor Yuri",
+      "email": "yuri123@gmail.com",
+      "senha_hash": "$2a$10$jbKibx.3HPgj/Xpltd3nheqdHFooZduXOr84q4x.YeEg.xF4SBmfW",
+      "role": "user",
+      "criado_em": "2026-04-20T13:49:37.828Z"
+    }
+  ],
+  "tccs": [
+    {
+      "id": "42a9dfd6-cc4e-49c3-b328-6d34a251fc48",
+      "titulo": "Tcc",
+      "autor": "Lucas",
+      "curso": "Redes de Computadores",
+      "ano": 2026,
+      "resumo": "",
+      "tipo": "tcc",
+      "arquivo_url": "/uploads/9498a151-df90-415a-b242-1cf25a0de31d.pdf",
+      "usuario_id": "fd905381-ea65-4b87-abe1-884440d95ec7",
+      "downloads": 4,
+      "visualizacoes": 4,
+      "criado_em": "2026-04-19T23:45:01.482Z"
+    }
+  ],
+  "solicitacoes": []
+}
