@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, Plus, UserPlus, BookOpen, Pencil } from "lucide-react";
 
-const API = "http://localhost:8080";
+const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}`;
 const cursos = ["Informática", "Redes de Computadores"];
 
 const Admin = () => {
@@ -36,10 +36,10 @@ const Admin = () => {
   }, [isAdmin]);
 
   const carregarTccs = () =>
-    fetch(`${API}/tccs`).then((r) => r.json()).then(setTccs);
+    fetch(`${API}/api/tccs`).then((r) => r.json()).then(setTccs);
 
   const carregarUsuarios = () =>
-    fetch(`${API}/admin/usuarios`, { headers: { Authorization: `Bearer ${getToken()}` } })
+    fetch(`${API}/api/admin/usuarios`, { headers: { Authorization: `Bearer ${getToken()}` } })
       .then((r) => r.json()).then(setUsuarios);
 
   const salvarTcc = async (e: React.FormEvent) => {
@@ -49,7 +49,7 @@ const Admin = () => {
     Object.entries(tccForm).forEach(([k, v]) => form.append(k, v));
     if (arquivo) form.append("arquivo", arquivo);
 
-    const res = await fetch(`${API}/tccs`, {
+    const res = await fetch(`${API}/api/tccs`, {
       method: "POST",
       headers: { Authorization: `Bearer ${getToken()}` },
       body: form,
@@ -69,7 +69,7 @@ const Admin = () => {
 
   const deletarTcc = async (id: string) => {
     if (!confirm("Tem certeza que deseja remover este TCC?")) return;
-    await fetch(`${API}/tccs/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${getToken()}` } });
+    await fetch(`${API}/api/tccs/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${getToken()}` } });
     toast({ title: "TCC removido." });
     carregarTccs();
   };
@@ -77,7 +77,7 @@ const Admin = () => {
   const criarUsuario = async (e: React.FormEvent) => {
     e.preventDefault();
     setSalvandoUser(true);
-    const res = await fetch(`${API}/auth/cadastro`, {
+    const res = await fetch(`${API}/api/auth/cadastro`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
       body: JSON.stringify(userForm),
@@ -86,7 +86,7 @@ const Admin = () => {
     if (res.ok) {
       const data = await res.json();
       if (userForm.role === "admin") {
-        await fetch(`${API}/admin/usuarios/${data.user.id}/role`, {
+        await fetch(`${API}/api/admin/usuarios/${data.user.id}/role`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
           body: JSON.stringify({ role: "admin" }),
@@ -104,7 +104,7 @@ const Admin = () => {
 
   const deletarUsuario = async (id: string) => {
     if (!confirm("Tem certeza que deseja remover este usuário?")) return;
-    await fetch(`${API}/admin/usuarios/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${getToken()}` } });
+    await fetch(`${API}/api/admin/usuarios/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${getToken()}` } });
     toast({ title: "Usuário removido." });
     carregarUsuarios();
   };
@@ -112,7 +112,7 @@ const Admin = () => {
   const salvarNome = async (e: React.FormEvent) => {
     e.preventDefault();
     setSalvandoNome(true);
-    const res = await fetch(`${API}/admin/usuarios/${user?.id}/nome`, {
+    const res = await fetch(`${API}/api/admin/usuarios/${user?.id}/nome`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
       body: JSON.stringify({ nome: novoNome }),
@@ -126,15 +126,21 @@ const Admin = () => {
   };
 
   const roleLabel = (role: string) => {
-    if (role === "super_admin") return "super admin";
-    if (role === "admin") return "admin";
-    return "user";
+    if (role === "super_admin") return "Super Admin";
+    if (role === "admin") return "Admin";
+    return "Usuário";
   };
 
   const roleColor = (role: string) => {
     if (role === "super_admin") return "text-yellow-500 font-bold";
     if (role === "admin") return "text-accent font-semibold";
-    return "";
+    return "text-blue-500";
+  };
+
+  const roleBg = (role: string) => {
+    if (role === "super_admin") return "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20";
+    if (role === "admin") return "bg-orange-500/10 text-orange-500 border border-orange-500/20";
+    return "bg-blue-500/10 text-blue-500 border border-blue-500/20";
   };
 
   return (
@@ -147,17 +153,14 @@ const Admin = () => {
       <Tabs defaultValue="tccs">
         <TabsList className="mb-6">
           <TabsTrigger value="tccs"><BookOpen className="h-4 w-4 mr-1" />TCCs</TabsTrigger>
-          {/* Aba de usuários: só super_admin vê */}
           {isSuperAdmin && (
             <TabsTrigger value="usuarios"><UserPlus className="h-4 w-4 mr-1" />Usuários</TabsTrigger>
           )}
-          {/* Aba de perfil: só super_admin vê */}
           {isSuperAdmin && (
             <TabsTrigger value="perfil"><Pencil className="h-4 w-4 mr-1" />Meu Perfil</TabsTrigger>
           )}
         </TabsList>
 
-        {/* ABA TCCS — todos os admins veem */}
         <TabsContent value="tccs" className="space-y-8">
           <div className="rounded-xl border border-border/40 bg-card/50 p-6">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2"><Plus className="h-5 w-5" />Adicionar TCC</h2>
@@ -225,7 +228,6 @@ const Admin = () => {
           </div>
         </TabsContent>
 
-        {/* ABA USUÁRIOS — só super_admin */}
         {isSuperAdmin && (
           <TabsContent value="usuarios" className="space-y-8">
             <div className="rounded-xl border border-border/40 bg-card/50 p-6">
@@ -262,19 +264,28 @@ const Admin = () => {
             <div className="rounded-xl border border-border/40 bg-card/50 p-6">
               <h2 className="font-semibold text-lg mb-4">Usuários Cadastrados ({usuarios.length})</h2>
               <div className="space-y-2">
+                {usuarios.length === 0 && <p className="text-sm text-muted-foreground text-center py-4">Nenhum usuário cadastrado ainda.</p>}
                 {usuarios.map((u) => (
                   <div key={u.id} className="flex items-center justify-between p-3 rounded-lg border border-border/30 bg-background">
-                    <div>
-                      <p className="font-medium text-sm text-foreground">{u.nome}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {u.email} · <span className={roleColor(u.role)}>{roleLabel(u.role)}</span>
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+                        {u.nome?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm text-foreground">{u.nome}</p>
+                        <p className="text-xs text-muted-foreground">{u.email}</p>
+                      </div>
                     </div>
-                    {u.id !== user?.id && u.role !== "super_admin" && (
-                      <Button variant="ghost" size="sm" onClick={() => deletarUsuario(u.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${roleBg(u.role)}`}>
+                        {roleLabel(u.role)}
+                      </span>
+                      {u.id !== user?.id && u.role !== "super_admin" && (
+                        <Button variant="ghost" size="sm" onClick={() => deletarUsuario(u.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -282,7 +293,6 @@ const Admin = () => {
           </TabsContent>
         )}
 
-        {/* ABA PERFIL — só super_admin */}
         {isSuperAdmin && (
           <TabsContent value="perfil">
             <div className="rounded-xl border border-border/40 bg-card/50 p-6 max-w-md">
