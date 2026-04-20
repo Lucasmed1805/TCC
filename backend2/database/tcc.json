@@ -15,6 +15,14 @@
       "senha_hash": "$2a$10$jbKibx.3HPgj/Xpltd3nheqdHFooZduXOr84q4x.YeEg.xF4SBmfW",
       "role": "user",
       "criado_em": "2026-04-20T13:49:37.828Z"
+    },
+    {
+      "id": "158bb5b7-3dd0-47a2-bba9-ac8dd8c95a3d",
+      "nome": "Lucas Medeiros",
+      "email": "lucas.med1805@gmail.com",
+      "senha_hash": "$2a$10$xgpDKxmR.lFtYbByCjC5fOzaX80zj6oF9cOV8d.R.mPOQ5FFKGTwy",
+      "role": "admin",
+      "criado_em": "2026-04-20T16:03:22.875Z"
     }
   ],
   "tccs": [

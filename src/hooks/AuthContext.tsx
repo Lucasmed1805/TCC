@@ -18,9 +18,22 @@ interface AuthContextType {
   cadastro: (nome: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
   atualizarPerfil: (nome: string, senhaAtual?: string, novaSenha?: string) => Promise<{ ok: boolean; error?: string }>;
-}
+};
 
-const API = "http://localhost:3001/api";
+// ================== CONFIGURAÇÃO DO BACKEND ==================
+const getApiUrl = () => {
+  // Produção (Vercel)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return `${process.env.NEXT_PUBLIC_API_URL}/api`;
+  }
+  
+  // Desenvolvimento local
+  return "http://localhost:3001/api";
+};
+
+const API = getApiUrl();
+// ============================================================
+
 const TOKEN_KEY = "tcc_token";
 const USER_KEY = "tcc_user";
 
@@ -51,7 +64,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem(USER_KEY, JSON.stringify(data.user));
       setUser(data.user);
       return { ok: true };
-    } catch {
+    } catch (err) {
+      console.error("Erro no login:", err);
       return { ok: false, error: "Não foi possível conectar ao servidor." };
     }
   };
@@ -71,7 +85,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem(USER_KEY, JSON.stringify(data.user));
       setUser(data.user);
       return { ok: true };
-    } catch {
+    } catch (err) {
+      console.error("Erro no cadastro:", err);
       return { ok: false, error: "Não foi possível conectar ao servidor." };
     }
   };
@@ -99,9 +114,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userAtualizado = { ...user!, nome };
       localStorage.setItem(USER_KEY, JSON.stringify(userAtualizado));
       setUser(userAtualizado);
-
       return { ok: true };
-    } catch {
+    } catch (err) {
+      console.error("Erro ao atualizar perfil:", err);
       return { ok: false, error: "Não foi possível conectar ao servidor." };
     }
   };
