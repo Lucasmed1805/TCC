@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth, getToken } from "@/hooks/AuthContext";
 
-const API = "http://localhost:8080";
+const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api`;
 
 const navItems = [
   { label: "Início", path: "/" },
@@ -116,7 +116,6 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-2">
           {isLoggedIn ? (
             <>
-              {/* Nome + badge de tipo */}
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <User className="h-4 w-4 text-accent" />
                 <span className="font-medium text-foreground">{user?.nome}</span>
@@ -251,7 +250,6 @@ const Navbar = () => {
               <div className="flex flex-col gap-2 mt-2 px-4">
                 {isLoggedIn ? (
                   <>
-                    {/* Badge mobile */}
                     <div className="flex items-center gap-2 py-1">
                       <User className="h-4 w-4 text-accent" />
                       <span className="text-sm font-medium text-foreground">{user?.nome}</span>
