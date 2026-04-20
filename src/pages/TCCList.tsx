@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion } from "framer-motion";
 import TCCCard from "@/components/TCCCard";
 
-const API = "http://localhost:3001/api";
+const API = "http://localhost:8080/api";
 const cursos = ["Informática", "Redes de Computadores"];
 
 const TCCList = () => {

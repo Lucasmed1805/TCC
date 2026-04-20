@@ -25,7 +25,7 @@ const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) {
     return `${import.meta.env.VITE_API_URL}/api`;
   }
-  return "http://localhost:3001/api";
+  return "http://localhost:8080";
 };
 
 const API = getApiUrl();

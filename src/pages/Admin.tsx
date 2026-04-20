@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, Plus, UserPlus, BookOpen, Pencil } from "lucide-react";
 
-const API = "http://localhost:3001/api";
+const API = "http://localhost:8080";
 const cursos = ["Informática", "Redes de Computadores"];
 
 const Admin = () => {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth, getToken } from "@/hooks/AuthContext";
 
-const API = "http://localhost:3001/api";
+const API = "http://localhost:8080";
 
 const navItems = [
   { label: "Início", path: "/" },

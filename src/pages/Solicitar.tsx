@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
-const API = "http://localhost:3001/api";
+const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api`;
 
 const Solicitar = () => {
   const [nome, setNome] = useState("");

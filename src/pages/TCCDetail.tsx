@@ -4,7 +4,7 @@ import { ArrowLeft, Download, Eye, Calendar, User, Tag, BookOpen } from "lucide-
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
-const API = "http://localhost:3001/api";
+const API = "http://localhost:8080";
 
 const TCCDetail = () => {
   const { id } = useParams();
@@ -21,7 +21,7 @@ const TCCDetail = () => {
   const handleDownload = async () => {
     await fetch(`${API}/tccs/${id}/download`, { method: "POST" });
     if (tcc?.arquivo_url) {
-      window.open(`http://localhost:3001${tcc.arquivo_url}`, "_blank");
+      window.open(`http://localhost:8080${tcc.arquivo_url}`, "_blank");
     }
   };
 

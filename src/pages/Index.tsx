@@ -6,7 +6,7 @@ import TCCCarousel from "@/components/TCCCarousel";
 import TCCCard from "@/components/TCCCard";
 import type { TCC } from "@/types/tcc";
 
-const API = "http://localhost:3001/api";
+const API = "http://localhost:8080";
 
 export const cursos = [
   "Informática",
