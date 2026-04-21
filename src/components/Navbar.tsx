@@ -55,7 +55,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Fecha menu ao navegar
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   const aprovar = async (id: string) => {
@@ -145,18 +144,18 @@ const Navbar = () => {
                           {solicitacoes.length === 0 ? (
                             <p className="text-sm text-white/40 text-center py-6">Nenhuma solicitação pendente.</p>
                           ) : solicitacoes.map((s) => (
-                            <div key={s.id} className="px-4 py-3 border-b border-white/5 last:border-0">
+                            <div key={s._id} className="px-4 py-3 border-b border-white/5 last:border-0">
                               <p className="text-sm font-medium text-white">{s.nome}</p>
                               <p className="text-xs text-white/40">{s.email}</p>
                               <p className="text-xs text-white/30 mb-3">
-                                {new Date(s.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                                {new Date(s.createdAt || s.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
                               </p>
                               <div className="flex gap-2">
-                                <button onClick={() => aprovar(s.id)}
+                                <button onClick={() => aprovar(s._id)}
                                   className="flex items-center gap-1 px-3 py-1 rounded-md bg-green-500/10 text-green-400 hover:bg-green-500/20 text-xs font-medium transition-colors">
                                   <Check className="h-3 w-3" /> Aprovar
                                 </button>
-                                <button onClick={() => rejeitar(s.id)}
+                                <button onClick={() => rejeitar(s._id)}
                                   className="flex items-center gap-1 px-3 py-1 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-medium transition-colors">
                                   <Trash2 className="h-3 w-3" /> Rejeitar
                                 </button>
@@ -218,15 +217,18 @@ const Navbar = () => {
                       {solicitacoes.length === 0 ? (
                         <p className="text-sm text-white/40 text-center py-6">Nenhuma pendente.</p>
                       ) : solicitacoes.map((s) => (
-                        <div key={s.id} className="px-4 py-3 border-b border-white/5 last:border-0">
+                        <div key={s._id} className="px-4 py-3 border-b border-white/5 last:border-0">
                           <p className="text-sm font-medium text-white">{s.nome}</p>
                           <p className="text-xs text-white/40 mb-2">{s.email}</p>
+                          <p className="text-xs text-white/30 mb-2">
+                            {new Date(s.createdAt || s.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                          </p>
                           <div className="flex gap-2">
-                            <button onClick={() => aprovar(s.id)}
+                            <button onClick={() => aprovar(s._id)}
                               className="flex-1 py-1.5 rounded-md bg-green-500/10 text-green-400 text-xs font-medium">
                               ✓ Aprovar
                             </button>
-                            <button onClick={() => rejeitar(s.id)}
+                            <button onClick={() => rejeitar(s._id)}
                               className="flex-1 py-1.5 rounded-md bg-red-500/10 text-red-400 text-xs font-medium">
                               ✕ Rejeitar
                             </button>
@@ -260,9 +262,7 @@ const Navbar = () => {
               {navItems.map((item) => (
                 <Link key={item.path} to={item.path} onClick={() => setOpen(false)}
                   className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-medium transition-all ${
-                    location.pathname === item.path
-                      ? "text-white font-semibold"
-                      : "text-white/50"
+                    location.pathname === item.path ? "text-white font-semibold" : "text-white/50"
                   }`}
                   style={location.pathname === item.path
                     ? { background: "rgba(26,79,160,0.35)", borderLeft: "3px solid #f5a623" }
