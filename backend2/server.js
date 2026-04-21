@@ -10,13 +10,20 @@ const { initDB } = require("./database/db");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({ 
+const corsOptions = {
   origin: [
+    "http://localhost:5173",
     "http://localhost:8080",
     "https://tcc-ten-beta.vercel.app"
-  ], 
-  credentials: true 
-}));
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
