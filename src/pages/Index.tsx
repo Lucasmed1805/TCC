@@ -81,7 +81,7 @@ const Index = () => {
               <Link to="/tccs" className="w-full sm:w-auto">
                 <button className="w-full sm:w-auto font-bold text-white text-sm px-7 py-3.5 rounded-xl transition-all active:scale-95"
                   style={{ background: "linear-gradient(135deg,#e85d04,#f97316)", boxShadow: "0 4px 20px rgba(232,93,4,0.35)" }}>
-                  ✉ Enviar meu trabalho
+                  ✉ Enviar TCC
                 </button>
               </Link>
             )}
