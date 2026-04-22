@@ -234,7 +234,7 @@ const Admin = () => {
         </div>
       </div>
 
-      <div className="px-5 pb-10 max-w-2xl mx-auto space-y-4">
+      <div className="px-5 pt-6 pb-10 max-w-2xl mx-auto space-y-4">
 
         {/* ── ABA TCCs ── */}
         {aba === "tccs" && (
