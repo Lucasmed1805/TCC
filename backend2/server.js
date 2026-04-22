@@ -9,6 +9,7 @@ const iaRoutes = require("./routes/ia");
 const { initDB } = require("./database/db");
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
   origin: [
@@ -33,15 +34,11 @@ app.use("/api/ia", iaRoutes);
 
 app.get("/", (req, res) => res.json({ message: "TCC Digital API rodando!" }));
 
-// ✅ Para rodar local ainda funciona
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3001;
-  initDB().then(() => {
-    app.listen(PORT, () => console.log(`✅ Servidor rodando em http://localhost:${PORT}`));
-  });
-} else {
-  // ✅ No Vercel conecta ao banco antes de cada request
-  initDB().catch(console.error);
-}
+initDB().then(() => {
+  app.listen(PORT, "0.0.0.0", () => console.log(`✅ Servidor rodando na porta ${PORT}`));
+}).catch(err => {
+  console.error("Erro ao iniciar:", err);
+  process.exit(1);
+});
 
 module.exports = app;
