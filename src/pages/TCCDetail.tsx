@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Download, Eye, Calendar, User, Tag, BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Download, Eye, Calendar, User, BookOpen, GraduationCap, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 
-const API = "http://localhost:8080";
+const API = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const TCCDetail = () => {
   const { id } = useParams();
   const [tcc, setTcc] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     fetch(`${API}/tccs/${id}`)
@@ -19,84 +19,178 @@ const TCCDetail = () => {
   }, [id]);
 
   const handleDownload = async () => {
-    await fetch(`${API}/tccs/${id}/download`, { method: "POST" });
-    if (tcc?.arquivo_url) {
-      window.open(`http://localhost:8080${tcc.arquivo_url}`, "_blank");
+    setDownloading(true);
+    try {
+      await fetch(`${API}/tccs/${id}/download`, { method: "POST" });
+      if (tcc?.arquivo_url) {
+        window.open(tcc.arquivo_url.startsWith("http") ? tcc.arquivo_url : `${API}${tcc.arquivo_url}`, "_blank");
+      }
+    } finally {
+      setDownloading(false);
     }
   };
 
-  if (loading) return <div className="container py-20 text-center text-muted-foreground">Carregando...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#060e1f" }}>
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#1a4fa0", borderTopColor: "transparent" }} />
+        <p className="text-sm text-white/40">Carregando...</p>
+      </div>
+    </div>
+  );
 
   if (!tcc) return (
-    <div className="container py-20 text-center">
-      <p className="text-lg font-semibold text-foreground">TCC não encontrado</p>
-      <Link to="/tccs"><Button variant="outline" className="mt-4">Voltar ao acervo</Button></Link>
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 gap-4" style={{ background: "#060e1f" }}>
+      <BookOpen className="h-16 w-16 text-white/10" />
+      <p className="text-lg font-semibold text-white">TCC não encontrado</p>
+      <Link to="/tccs"
+        className="px-6 py-3 rounded-xl text-sm font-semibold text-white"
+        style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}>
+        Voltar ao acervo
+      </Link>
     </div>
   );
 
   return (
-    <div className="container py-10">
-      <Link to="/tccs" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
-        <ArrowLeft className="h-4 w-4" /> Voltar ao acervo
-      </Link>
+    <div className="min-h-screen" style={{ background: "#060e1f" }}>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20 mb-4">
+      {/* Header fixo mobile */}
+      <div className="sticky top-0 z-10 px-4 py-3 flex items-center gap-3 border-b border-white/10"
+        style={{ background: "rgba(6,14,31,0.92)", backdropFilter: "blur(12px)" }}>
+        <Link to="/tccs" className="p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-colors -ml-1">
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-white truncate">{tcc.titulo}</p>
+          <p className="text-xs text-white/40 truncate">{tcc.autor}</p>
+        </div>
+      </div>
+
+      <div className="px-4 pb-10 max-w-2xl mx-auto">
+
+        {/* Badge do curso */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="pt-6">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
+            style={{ background: "rgba(26,79,160,0.2)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.2)" }}>
+            <GraduationCap style={{ height: 12, width: 12 }} />
             {tcc.curso}
           </span>
-          <h1 className="font-serif text-2xl md:text-3xl font-bold mb-4 text-foreground leading-tight">{tcc.titulo}</h1>
+        </motion.div>
 
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-6">
-            <span className="flex items-center gap-1.5"><User className="h-4 w-4" />{tcc.autor}</span>
-            <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{tcc.ano}</span>
-            <span className="flex items-center gap-1.5"><Eye className="h-4 w-4" />{tcc.visualizacoes} visualizações</span>
-            <span className="flex items-center gap-1.5"><Download className="h-4 w-4" />{tcc.downloads} downloads</span>
+        {/* Título */}
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+          className="mt-3 text-xl font-extrabold text-white leading-snug">
+          {tcc.titulo}
+        </motion.h1>
+
+        {/* Meta info */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="mt-4 flex flex-wrap gap-3">
+          {[
+            { Icon: User, label: tcc.autor },
+            { Icon: Calendar, label: tcc.ano },
+            { Icon: Eye, label: `${tcc.visualizacoes || 0} views` },
+            { Icon: Download, label: `${tcc.downloads || 0} downloads` },
+          ].map(({ Icon, label }) => (
+            <div key={label} className="flex items-center gap-1.5 text-xs text-white/50">
+              <Icon style={{ height: 13, width: 13 }} />
+              {label}
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Divider */}
+        <div className="mt-5 border-t border-white/8" />
+
+        {/* Resumo */}
+        {tcc.resumo && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+            className="mt-5">
+            <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <span className="inline-block w-1 h-4 rounded-full" style={{ background: "#f5a623" }} />
+              Resumo
+            </h2>
+            <p className="text-sm text-white/60 leading-relaxed">{tcc.resumo}</p>
+          </motion.div>
+        )}
+
+        {/* Card de informações */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="mt-6 rounded-2xl p-4 grid grid-cols-2 gap-3"
+          style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
+          {[
+            { label: "Autor", value: tcc.autor },
+            { label: "Curso", value: tcc.curso },
+            { label: "Ano", value: tcc.ano },
+            { label: "Tipo", value: tcc.tipo?.toUpperCase() },
+            { label: "Downloads", value: tcc.downloads || 0 },
+            { label: "Visualizações", value: tcc.visualizacoes || 0 },
+          ].map((item) => (
+            <div key={item.label} className="flex flex-col gap-0.5">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-white/30">{item.label}</span>
+              <span className="text-sm font-semibold text-white truncate">{item.value}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Área do arquivo */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+          className="mt-4 rounded-2xl p-5"
+          style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: "rgba(239,68,68,0.12)" }}>
+              <FileText style={{ height: 20, width: 20, color: "#f87171" }} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Arquivo PDF</p>
+              <p className="text-xs text-white/40">
+                {tcc.arquivo_url ? "Disponível para download" : "Nenhum arquivo disponível"}
+              </p>
+            </div>
           </div>
 
-          {tcc.resumo && (
-            <div className="mb-6">
-              <h3 className="font-serif font-semibold mb-2 text-foreground">Resumo</h3>
-              <p className="text-muted-foreground leading-relaxed text-sm">{tcc.resumo}</p>
+          {tcc.arquivo_url ? (
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="w-full py-4 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-70"
+              style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)", boxShadow: "0 4px 20px rgba(37,99,235,0.3)" }}>
+              {downloading ? (
+                <>
+                  <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  Preparando...
+                </>
+              ) : (
+                <>
+                  <Download style={{ height: 16, width: 16 }} />
+                  Baixar PDF
+                </>
+              )}
+            </button>
+          ) : (
+            <div className="w-full py-4 rounded-xl text-sm text-white/30 text-center border border-white/10">
+              Arquivo não disponível
             </div>
           )}
+        </motion.div>
 
-          <div className="rounded-xl border border-border/40 bg-card/50 p-10 text-center mb-8">
-            <BookOpen className="h-16 w-16 mx-auto text-muted-foreground/20 mb-4" />
-            <p className="font-semibold mb-1 text-foreground">Arquivo PDF</p>
-            {tcc.arquivo_url ? (
-              <div className="flex justify-center gap-3 mt-4">
-                <Button variant="gold" className="gap-2" onClick={handleDownload}>
-                  <Download className="h-4 w-4" /> Baixar PDF
-                </Button>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Nenhum arquivo disponível para este TCC.</p>
-            )}
-          </div>
-        </div>
-
-        <aside>
-          <div className="rounded-xl border border-border/40 bg-card/50 p-5 sticky top-20">
-            <h3 className="font-serif font-semibold mb-4 text-foreground">Informações</h3>
-            <dl className="space-y-3 text-sm">
-              {[
-                { label: "Autor", value: tcc.autor },
-                { label: "Curso", value: tcc.curso },
-                { label: "Ano", value: tcc.ano },
-                { label: "Tipo", value: tcc.tipo?.toUpperCase() },
-                { label: "Downloads", value: tcc.downloads },
-                { label: "Visualizações", value: tcc.visualizacoes },
-              ].map((item) => (
-                <div key={item.label} className="flex justify-between">
-                  <dt className="text-muted-foreground">{item.label}</dt>
-                  <dd className="font-medium text-foreground text-right">{item.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </aside>
-      </motion.div>
+        {/* Voltar ao acervo */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+          className="mt-4">
+          <Link to="/tccs"
+            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-medium text-white/50 border border-white/10 hover:text-white hover:border-white/20 transition-all">
+            <ArrowLeft style={{ height: 15, width: 15 }} />
+            Voltar ao acervo
+          </Link>
+        </motion.div>
+      </div>
     </div>
   );
 };
