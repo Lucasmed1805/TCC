@@ -361,63 +361,118 @@ const Admin = () => {
               ))}
             </div>
 
-            {/* Caixa única com header, formulário colapsável e lista com scroll */}
-            <div className="rounded-2xl overflow-hidden"
-              style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
-
-              {/* Header */}
-              <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+            {/* ── Caixa "Todos os Usuários" com altura fixa e scroll interno ── */}
+            <div
+              className="rounded-2xl flex flex-col"
+              style={{
+                background: "#111f38",
+                border: "1px solid rgba(255,255,255,0.07)",
+                /* Altura total fixa da caixa inteira */
+                height: criarAberto ? "620px" : "420px",
+                transition: "height 0.3s ease",
+              }}
+            >
+              {/* Cabeçalho — fixo, nunca rola */}
+              <div
+                className="px-5 py-4 flex items-center justify-between shrink-0"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+              >
                 <p className="text-sm font-semibold text-white">Todos os Usuários</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full"
-                    style={{ background: "rgba(26,79,160,0.3)", color: "#60a5fa" }}>{usuarios.length}</span>
+                  <span
+                    className="text-xs font-bold px-2.5 py-1 rounded-full"
+                    style={{ background: "rgba(26,79,160,0.3)", color: "#60a5fa" }}
+                  >
+                    {usuarios.length}
+                  </span>
                   <button
                     onClick={() => setCriarAberto(!criarAberto)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
-                    style={{ background: criarAberto ? "rgba(37,99,235,0.3)" : "rgba(37,99,235,0.15)", color: "#60a5fa", border: "1px solid rgba(37,99,235,0.3)" }}>
+                    style={{
+                      background: criarAberto ? "rgba(37,99,235,0.3)" : "rgba(37,99,235,0.15)",
+                      color: "#60a5fa",
+                      border: "1px solid rgba(37,99,235,0.3)",
+                    }}
+                  >
                     <UserPlus style={{ height: 12, width: 12 }} />
                     {criarAberto ? "Cancelar" : "Criar"}
                   </button>
                 </div>
               </div>
 
-              {/* Formulário colapsável */}
+              {/* Formulário colapsável — fixo (shrink-0), não faz parte do scroll */}
               {criarAberto && (
-                <div className="px-5 py-4 space-y-3 border-b border-white/5"
-                  style={{ background: "rgba(255,255,255,0.02)" }}>
+                <div
+                  className="px-5 py-4 space-y-3 shrink-0"
+                  style={{
+                    borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    background: "rgba(255,255,255,0.02)",
+                  }}
+                >
                   <form onSubmit={criarUsuario} className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Nome *">
-                        <StyledInput value={userForm.nome} onChange={(e) => setUserForm({ ...userForm, nome: e.target.value })} required placeholder="Nome completo" />
+                        <StyledInput
+                          value={userForm.nome}
+                          onChange={(e) => setUserForm({ ...userForm, nome: e.target.value })}
+                          required
+                          placeholder="Nome completo"
+                        />
                       </Field>
                       <Field label="E-mail *">
-                        <StyledInput type="email" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} required placeholder="email@exemplo.com" />
+                        <StyledInput
+                          type="email"
+                          value={userForm.email}
+                          onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
+                          required
+                          placeholder="email@exemplo.com"
+                        />
                       </Field>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Senha *">
-                        <StyledInput type="password" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} required placeholder="Mínimo 6 caracteres" />
+                        <StyledInput
+                          type="password"
+                          value={userForm.password}
+                          onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
+                          required
+                          placeholder="Mínimo 6 caracteres"
+                        />
                       </Field>
                       <Field label="Tipo">
-                        <StyledSelect value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
+                        <StyledSelect
+                          value={userForm.role}
+                          onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
+                        >
                           <option value="user">Usuário comum</option>
                           <option value="admin">Administrador</option>
                         </StyledSelect>
                       </Field>
                     </div>
-                    <button type="submit" disabled={salvandoUser} className={btnPrimary}
-                      style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}>
+                    <button
+                      type="submit"
+                      disabled={salvandoUser}
+                      className={btnPrimary}
+                      style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}
+                    >
                       {salvandoUser ? "Criando..." : <><UserPlus style={{ height: 16, width: 16 }} /> Criar Usuário</>}
                     </button>
                   </form>
                 </div>
               )}
 
-              {/* Lista com scroll */}
+              {/* Lista — ocupa o espaço restante e rola internamente */}
               {usuarios.length === 0 ? (
                 <p className="text-sm text-white/30 text-center py-10">Nenhum usuário cadastrado.</p>
               ) : (
-                <div className="divide-y divide-white/5 overflow-y-auto" style={{ maxHeight: "280px"}}>
+                <div
+                  className="divide-y divide-white/5 overflow-y-scroll flex-1 min-h-0"
+                  style={{
+                    /* Scrollbar estilizada para combinar com o tema escuro */
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "rgba(96,165,250,0.25) transparent",
+                  }}
+                >
                   {usuarios.map((u) => {
                     const badge = roleBadge(u.role);
                     const RoleIcon = badge.Icon;
@@ -434,13 +489,17 @@ const Admin = () => {
                         <button
                           onClick={() => setExpandidoId(expandido ? null : uid)}
                           className="w-full flex items-center gap-3 px-5 py-3.5 text-left transition-all"
-                          style={{ background: expandido ? "rgba(255,255,255,0.03)" : "transparent" }}>
-
-                          <div className="h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-sm font-bold text-white relative"
-                            style={{ background: badge.avatarBg }}>
+                          style={{ background: expandido ? "rgba(255,255,255,0.03)" : "transparent" }}
+                        >
+                          <div
+                            className="h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-sm font-bold text-white relative"
+                            style={{ background: badge.avatarBg }}
+                          >
                             {u.nome?.charAt(0).toUpperCase()}
-                            <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center"
-                              style={{ background: "#111f38" }}>
+                            <div
+                              className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center"
+                              style={{ background: "#111f38" }}
+                            >
                               <RoleIcon style={{ height: 10, width: 10, color: badge.iconColor }} />
                             </div>
                           </div>
@@ -449,12 +508,17 @@ const Admin = () => {
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="text-sm font-semibold text-white truncate">{u.nome}</p>
                               {isSelf && (
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                                  style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)" }}>
+                                <span
+                                  className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                                  style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)" }}
+                                >
                                   Você
                                 </span>
                               )}
-                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0" style={badge.style}>
+                              <span
+                                className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0"
+                                style={badge.style}
+                              >
                                 {badge.label}
                               </span>
                             </div>
@@ -471,10 +535,14 @@ const Admin = () => {
                         </button>
 
                         {expandido && (
-                          <div className="px-5 pb-4 space-y-3"
-                            style={{ borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(255,255,255,0.01)" }}>
-                            <div className="rounded-xl p-3 space-y-2 mt-2"
-                              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                          <div
+                            className="px-5 pb-4 space-y-3"
+                            style={{ borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(255,255,255,0.01)" }}
+                          >
+                            <div
+                              className="rounded-xl p-3 space-y-2 mt-2"
+                              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+                            >
                               <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>E-mail</span>
                                 <span className="text-xs text-white/70">{u.email}</span>
@@ -496,13 +564,15 @@ const Admin = () => {
                                   className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all"
                                   style={u.role === "admin"
                                     ? { background: "rgba(249,115,22,0.15)", color: "#fb923c", border: "1px solid rgba(249,115,22,0.25)" }
-                                    : { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.25)" }}>
+                                    : { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.25)" }}
+                                >
                                   {u.role === "admin" ? "↓ Rebaixar para Usuário" : "↑ Promover para Admin"}
                                 </button>
                                 <button
                                   onClick={() => deletarUsuario(uid)}
                                   className="px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
-                                  style={{ background: "rgba(239,68,68,0.15)", color: "#f87171", border: "1px solid rgba(239,68,68,0.25)" }}>
+                                  style={{ background: "rgba(239,68,68,0.15)", color: "#f87171", border: "1px solid rgba(239,68,68,0.25)" }}
+                                >
                                   <Trash2 style={{ height: 14, width: 14 }} />
                                 </button>
                               </div>
