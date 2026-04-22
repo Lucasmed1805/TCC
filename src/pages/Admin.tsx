@@ -411,7 +411,7 @@ const Admin = () => {
                 <>
                   {/* Botão Criar dentro do conteúdo */}
                   <div
-                    className="px-5 py-3 flex justify-end"
+                    className="px-5 py-3 flex justify-start"
                     style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
                   >
                     <button
