@@ -39,6 +39,7 @@ const App = () => (
                 <Route path="/solicitar"  element={<Solicitar />} />
                 <Route path="/admin"      element={<Admin />} />
                 <Route path="/perfil"     element={<Perfil />} />
+                <Route path="/perfil/:id" element={<Perfil />} />
                 <Route path="*"           element={<NotFound />} />
               </Routes>
             </main>
