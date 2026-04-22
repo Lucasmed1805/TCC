@@ -417,7 +417,7 @@ const Admin = () => {
               {usuarios.length === 0 ? (
                 <p className="text-sm text-white/30 text-center py-10">Nenhum usuário cadastrado.</p>
               ) : (
-                <div className="divide-y divide-white/5 overflow-y-auto" style={{ maxHeight: "420px" }}>
+                <div className="divide-y divide-white/5 overflow-y-auto" style={{ maxHeight: "280px"}}>
                   {usuarios.map((u) => {
                     const badge = roleBadge(u.role);
                     const RoleIcon = badge.Icon;
