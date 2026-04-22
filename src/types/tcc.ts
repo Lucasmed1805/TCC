@@ -1,5 +1,6 @@
 export interface TCC {
   id: string;
+  _id?: string;
   titulo: string;
   autor: string;
   curso: string;
@@ -10,4 +11,5 @@ export interface TCC {
   downloads: number;
   visualizacoes: number;
   criado_em: string;
+  createdAt?: string;
 }
