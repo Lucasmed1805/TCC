@@ -46,6 +46,7 @@ const Admin = () => {
   const [tccs, setTccs] = useState<any[]>([]);
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [formAberto, setFormAberto] = useState(false);
+  const [criarAberto, setCriarAberto] = useState(false);
 
   const [tccForm, setTccForm] = useState({
     titulo: "", autor: "", curso: "Informática",
@@ -60,7 +61,6 @@ const Admin = () => {
   const [novoNome, setNovoNome] = useState(user?.nome || "");
   const [salvandoNome, setSalvandoNome] = useState(false);
 
-  // Controla qual card de usuário está expandido
   const [expandidoId, setExpandidoId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -126,6 +126,7 @@ const Admin = () => {
       }
       toast({ title: "✅ Usuário criado com sucesso!" });
       setUserForm({ nome: "", email: "", password: "", role: "user" });
+      setCriarAberto(false);
       carregarUsuarios();
     } else {
       const data = await res.json();
@@ -197,7 +198,6 @@ const Admin = () => {
 
   const btnPrimary = "w-full py-4 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60";
 
-  // Separar usuários por role para exibição organizada
   const superAdmins = usuarios.filter(u => u.role === "super_admin");
   const admins = usuarios.filter(u => u.role === "admin");
   const usersComuns = usuarios.filter(u => u.role === "user");
@@ -319,7 +319,7 @@ const Admin = () => {
               {tccs.length === 0 ? (
                 <p className="text-sm text-white/30 text-center py-10">Nenhum TCC cadastrado ainda.</p>
               ) : (
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-white/5 overflow-y-auto" style={{ maxHeight: "400px" }}>
                   {tccs.map((tcc) => (
                     <div key={tcc._id || tcc.id} className="flex items-center gap-3 px-5 py-4">
                       <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0"
@@ -346,35 +346,6 @@ const Admin = () => {
         {/* ── ABA USUÁRIOS ── */}
         {aba === "usuarios" && isSuperAdmin && (
           <>
-            {/* Criar Usuário */}
-            <div className="rounded-2xl p-5 space-y-4"
-              style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="text-sm font-semibold text-white flex items-center gap-2">
-                <UserPlus style={{ height: 16, width: 16, color: "#60a5fa" }} /> Criar Usuário
-              </p>
-              <form onSubmit={criarUsuario} className="space-y-4">
-                <Field label="Nome completo *">
-                  <StyledInput value={userForm.nome} onChange={(e) => setUserForm({ ...userForm, nome: e.target.value })} required placeholder="Nome do usuário" />
-                </Field>
-                <Field label="E-mail *">
-                  <StyledInput type="email" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} required placeholder="email@exemplo.com" />
-                </Field>
-                <Field label="Senha *">
-                  <StyledInput type="password" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} required placeholder="Mínimo 6 caracteres" />
-                </Field>
-                <Field label="Tipo">
-                  <StyledSelect value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
-                    <option value="user">Usuário comum</option>
-                    <option value="admin">Administrador</option>
-                  </StyledSelect>
-                </Field>
-                <button type="submit" disabled={salvandoUser} className={btnPrimary}
-                  style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}>
-                  {salvandoUser ? "Criando..." : <><UserPlus style={{ height: 16, width: 16 }} /> Criar Usuário</>}
-                </button>
-              </form>
-            </div>
-
             {/* Resumo de contagens */}
             <div className="grid grid-cols-3 gap-3">
               {[
@@ -390,19 +361,63 @@ const Admin = () => {
               ))}
             </div>
 
-            {/* Lista de Usuários */}
+            {/* Caixa única com header, formulário colapsável e lista com scroll */}
             <div className="rounded-2xl overflow-hidden"
               style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
+
+              {/* Header */}
               <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
                 <p className="text-sm font-semibold text-white">Todos os Usuários</p>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full"
-                  style={{ background: "rgba(26,79,160,0.3)", color: "#60a5fa" }}>{usuarios.length}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+                    style={{ background: "rgba(26,79,160,0.3)", color: "#60a5fa" }}>{usuarios.length}</span>
+                  <button
+                    onClick={() => setCriarAberto(!criarAberto)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+                    style={{ background: criarAberto ? "rgba(37,99,235,0.3)" : "rgba(37,99,235,0.15)", color: "#60a5fa", border: "1px solid rgba(37,99,235,0.3)" }}>
+                    <UserPlus style={{ height: 12, width: 12 }} />
+                    {criarAberto ? "Cancelar" : "Criar"}
+                  </button>
+                </div>
               </div>
 
+              {/* Formulário colapsável */}
+              {criarAberto && (
+                <div className="px-5 py-4 space-y-3 border-b border-white/5"
+                  style={{ background: "rgba(255,255,255,0.02)" }}>
+                  <form onSubmit={criarUsuario} className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Nome *">
+                        <StyledInput value={userForm.nome} onChange={(e) => setUserForm({ ...userForm, nome: e.target.value })} required placeholder="Nome completo" />
+                      </Field>
+                      <Field label="E-mail *">
+                        <StyledInput type="email" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} required placeholder="email@exemplo.com" />
+                      </Field>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Senha *">
+                        <StyledInput type="password" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} required placeholder="Mínimo 6 caracteres" />
+                      </Field>
+                      <Field label="Tipo">
+                        <StyledSelect value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
+                          <option value="user">Usuário comum</option>
+                          <option value="admin">Administrador</option>
+                        </StyledSelect>
+                      </Field>
+                    </div>
+                    <button type="submit" disabled={salvandoUser} className={btnPrimary}
+                      style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}>
+                      {salvandoUser ? "Criando..." : <><UserPlus style={{ height: 16, width: 16 }} /> Criar Usuário</>}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* Lista com scroll */}
               {usuarios.length === 0 ? (
                 <p className="text-sm text-white/30 text-center py-10">Nenhum usuário cadastrado.</p>
               ) : (
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-white/5 overflow-y-auto" style={{ maxHeight: "420px" }}>
                   {usuarios.map((u) => {
                     const badge = roleBadge(u.role);
                     const RoleIcon = badge.Icon;
@@ -416,23 +431,20 @@ const Admin = () => {
 
                     return (
                       <div key={uid}>
-                        {/* Linha principal — clicável para expandir */}
                         <button
                           onClick={() => setExpandidoId(expandido ? null : uid)}
-                          className="w-full flex items-center gap-3 px-5 py-4 text-left transition-all"
+                          className="w-full flex items-center gap-3 px-5 py-3.5 text-left transition-all"
                           style={{ background: expandido ? "rgba(255,255,255,0.03)" : "transparent" }}>
 
-                          {/* Avatar com ícone de role */}
-                          <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0 text-sm font-bold text-white relative"
+                          <div className="h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-sm font-bold text-white relative"
                             style={{ background: badge.avatarBg }}>
                             {u.nome?.charAt(0).toUpperCase()}
                             <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center"
-                              style={{ background: "#060e1f" }}>
+                              style={{ background: "#111f38" }}>
                               <RoleIcon style={{ height: 10, width: 10, color: badge.iconColor }} />
                             </div>
                           </div>
 
-                          {/* Info */}
                           <div className="flex-1 min-w-0 text-left">
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="text-sm font-semibold text-white truncate">{u.nome}</p>
@@ -450,19 +462,17 @@ const Admin = () => {
                           </div>
 
                           <ChevronDown style={{
-                            height: 15, width: 15,
+                            height: 14, width: 14,
                             color: "rgba(255,255,255,0.3)",
                             transform: expandido ? "rotate(180deg)" : "rotate(0deg)",
-                            transition: "transform 0.2s"
+                            transition: "transform 0.2s",
+                            flexShrink: 0,
                           }} />
                         </button>
 
-                        {/* Detalhes expandidos — só super admin vê */}
                         {expandido && (
                           <div className="px-5 pb-4 space-y-3"
-                            style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-
-                            {/* Infos detalhadas */}
+                            style={{ borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(255,255,255,0.01)" }}>
                             <div className="rounded-xl p-3 space-y-2 mt-2"
                               style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                               <div className="flex items-center justify-between">
@@ -474,16 +484,11 @@ const Admin = () => {
                                 <span className="text-xs text-white/70">{dataFormatada}</span>
                               </div>
                               <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>ID</span>
-                                <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.3)" }}>{uid}</span>
-                              </div>
-                              <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>Nível de acesso</span>
                                 <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={badge.style}>{badge.label}</span>
                               </div>
                             </div>
 
-                            {/* Ações — só para não-protegidos e não-self */}
                             {!isSelf && !isProtected && (
                               <div className="flex gap-2">
                                 <button
