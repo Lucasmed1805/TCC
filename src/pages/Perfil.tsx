@@ -36,7 +36,7 @@ const StyledSelect = ({ children, ...props }: React.SelectHTMLAttributes<HTMLSel
   <select
     {...props}
     className={inputClass}
-    style={{ ...inputStyle, color: "white" }}
+    style={{ ...inputStyle, color: "white", colorScheme: "dark" }}
   >
     {children}
   </select>
