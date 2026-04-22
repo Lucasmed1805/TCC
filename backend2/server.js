@@ -5,6 +5,7 @@ const path = require("path");
 const authRoutes = require("./routes/auth");
 const tccRoutes = require("./routes/tccs");
 const adminRoutes = require("./routes/admin");
+const iaRoutes = require("./routes/ia");
 const { initDB } = require("./database/db");
 
 const app = express();
@@ -30,6 +31,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/tccs", tccRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/ia", iaRoutes);
 
 app.get("/", (req, res) => res.json({ message: "TCC Digital API rodando!" }));
 
