@@ -10,6 +10,11 @@ router.post("/recomendar", async (req, res) => {
     return res.status(400).json({ error: "Digite uma pergunta ou ideia." });
   }
 
+  if (!process.env.GEMINI_API_KEY) {
+    console.error("GEMINI_API_KEY não configurada!");
+    return res.status(500).json({ error: "Chave da IA não configurada no servidor." });
+  }
+
   try {
     const tccs = await Tcc.find().select("titulo autor curso ano resumo tipo");
 
@@ -54,13 +59,19 @@ Responda em português, de forma clara, amigável e útil. Se for uma recomenda�
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Erro Gemini:", data);
+      console.error("Erro Gemini status:", response.status);
+      console.error("Erro Gemini body:", JSON.stringify(data));
+
+      // Mensagens de erro mais específicas
+      if (response.status === 400) return res.status(500).json({ error: "Requisição inválida para a IA." });
+      if (response.status === 403) return res.status(500).json({ error: "Chave da IA inválida ou sem permissão." });
+      if (response.status === 429) return res.status(500).json({ error: "Limite de uso da IA atingido. Tente novamente em instantes." });
+
       return res.status(500).json({ error: "Erro ao consultar a IA." });
     }
 
     const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar uma resposta.";
 
-    // Só extrai TCCs recomendados se houver índices na resposta
     const indices = [...texto.matchAll(/\[(\d+)\]/g)].map(m => parseInt(m[1]) - 1);
     const recomendados = indices
       .filter(i => i >= 0 && i < tccs.length)
