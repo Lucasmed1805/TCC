@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, getToken } from "@/hooks/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, UserPlus, BookOpen, Pencil, ChevronDown, ChevronUp, Users, Settings } from "lucide-react";
+import { Trash2, Plus, UserPlus, BookOpen, Pencil, ChevronDown, ChevronUp, Users, Settings, ShieldCheck, Shield, User } from "lucide-react";
 
 const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}`;
 const cursos = ["Informática", "Redes de Computadores"];
@@ -59,6 +59,9 @@ const Admin = () => {
 
   const [novoNome, setNovoNome] = useState(user?.nome || "");
   const [salvandoNome, setSalvandoNome] = useState(false);
+
+  // Controla qual card de usuário está expandido
+  const [expandidoId, setExpandidoId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdmin) { navigate("/"); return; }
@@ -138,6 +141,17 @@ const Admin = () => {
     carregarUsuarios();
   };
 
+  const alterarRole = async (id: string, nomeUsuario: string, roleAtual: string) => {
+    const novaRole = roleAtual === "admin" ? "user" : "admin";
+    await fetch(`${API}/api/admin/usuarios/${id}/role`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify({ role: novaRole }),
+    });
+    toast({ title: `✅ ${nomeUsuario} agora é ${novaRole === "admin" ? "Administrador" : "Usuário comum"}.` });
+    carregarUsuarios();
+  };
+
   const salvarNome = async (e: React.FormEvent) => {
     e.preventDefault();
     setSalvandoNome(true);
@@ -152,9 +166,27 @@ const Admin = () => {
   };
 
   const roleBadge = (role: string) => {
-    if (role === "super_admin") return { label: "Super Admin", style: { background: "rgba(245,166,35,0.15)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.3)" } };
-    if (role === "admin") return { label: "Admin", style: { background: "rgba(249,115,22,0.15)", color: "#fb923c", border: "1px solid rgba(249,115,22,0.3)" } };
-    return { label: "Usuário", style: { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)" } };
+    if (role === "super_admin") return {
+      label: "Super Admin",
+      style: { background: "rgba(245,166,35,0.15)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.3)" },
+      avatarBg: "rgba(245,166,35,0.2)",
+      Icon: ShieldCheck,
+      iconColor: "#f5a623",
+    };
+    if (role === "admin") return {
+      label: "Admin",
+      style: { background: "rgba(249,115,22,0.15)", color: "#fb923c", border: "1px solid rgba(249,115,22,0.3)" },
+      avatarBg: "rgba(249,115,22,0.2)",
+      Icon: Shield,
+      iconColor: "#fb923c",
+    };
+    return {
+      label: "Usuário",
+      style: { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)" },
+      avatarBg: "rgba(59,130,246,0.2)",
+      Icon: User,
+      iconColor: "#60a5fa",
+    };
   };
 
   const abas = [
@@ -164,6 +196,11 @@ const Admin = () => {
   ] as const;
 
   const btnPrimary = "w-full py-4 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60";
+
+  // Separar usuários por role para exibição organizada
+  const superAdmins = usuarios.filter(u => u.role === "super_admin");
+  const admins = usuarios.filter(u => u.role === "admin");
+  const usersComuns = usuarios.filter(u => u.role === "user");
 
   return (
     <div className="min-h-screen" style={{ background: "#060e1f" }}>
@@ -199,7 +236,6 @@ const Admin = () => {
         {/* ── ABA TCCs ── */}
         {aba === "tccs" && (
           <>
-            {/* Botão abrir formulário */}
             <button onClick={() => setFormAberto(!formAberto)}
               className="w-full flex items-center justify-between px-5 py-4 rounded-2xl transition-all"
               style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -215,7 +251,6 @@ const Admin = () => {
                 : <ChevronDown style={{ height: 18, width: 18, color: "rgba(255,255,255,0.4)" }} />}
             </button>
 
-            {/* Formulário */}
             {formAberto && (
               <div className="rounded-2xl p-5 space-y-4"
                 style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -274,7 +309,6 @@ const Admin = () => {
               </div>
             )}
 
-            {/* Lista de TCCs */}
             <div className="rounded-2xl overflow-hidden"
               style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
               <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
@@ -312,6 +346,7 @@ const Admin = () => {
         {/* ── ABA USUÁRIOS ── */}
         {aba === "usuarios" && isSuperAdmin && (
           <>
+            {/* Criar Usuário */}
             <div className="rounded-2xl p-5 space-y-4"
               style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
               <p className="text-sm font-semibold text-white flex items-center gap-2">
@@ -340,39 +375,134 @@ const Admin = () => {
               </form>
             </div>
 
+            {/* Resumo de contagens */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: "Super Admin", count: superAdmins.length, color: "#f5a623", bg: "rgba(245,166,35,0.1)", border: "rgba(245,166,35,0.2)" },
+                { label: "Admins", count: admins.length, color: "#fb923c", bg: "rgba(249,115,22,0.1)", border: "rgba(249,115,22,0.2)" },
+                { label: "Usuários", count: usersComuns.length, color: "#60a5fa", bg: "rgba(59,130,246,0.1)", border: "rgba(59,130,246,0.2)" },
+              ].map(({ label, count, color, bg, border }) => (
+                <div key={label} className="rounded-2xl p-4 text-center"
+                  style={{ background: bg, border: `1px solid ${border}` }}>
+                  <p className="text-2xl font-extrabold" style={{ color }}>{count}</p>
+                  <p className="text-[10px] font-semibold mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Lista de Usuários */}
             <div className="rounded-2xl overflow-hidden"
               style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}>
               <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-                <p className="text-sm font-semibold text-white">Usuários Cadastrados</p>
+                <p className="text-sm font-semibold text-white">Todos os Usuários</p>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full"
                   style={{ background: "rgba(26,79,160,0.3)", color: "#60a5fa" }}>{usuarios.length}</span>
               </div>
+
               {usuarios.length === 0 ? (
                 <p className="text-sm text-white/30 text-center py-10">Nenhum usuário cadastrado.</p>
               ) : (
                 <div className="divide-y divide-white/5">
                   {usuarios.map((u) => {
                     const badge = roleBadge(u.role);
+                    const RoleIcon = badge.Icon;
+                    const isSelf = (u._id || u.id) === user?.id;
+                    const isProtected = u.role === "super_admin";
+                    const uid = u._id || u.id;
+                    const expandido = expandidoId === uid;
+                    const dataFormatada = u.createdAt
+                      ? new Date(u.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
+                      : "—";
+
                     return (
-                      <div key={u._id || u.id} className="flex items-center gap-3 px-5 py-4">
-                        <div className="h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-sm font-bold text-white"
-                          style={{ background: "rgba(245,166,35,0.15)" }}>
-                          {u.nome?.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-sm font-medium text-white truncate">{u.nome}</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0" style={badge.style}>
-                              {badge.label}
-                            </span>
+                      <div key={uid}>
+                        {/* Linha principal — clicável para expandir */}
+                        <button
+                          onClick={() => setExpandidoId(expandido ? null : uid)}
+                          className="w-full flex items-center gap-3 px-5 py-4 text-left transition-all"
+                          style={{ background: expandido ? "rgba(255,255,255,0.03)" : "transparent" }}>
+
+                          {/* Avatar com ícone de role */}
+                          <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0 text-sm font-bold text-white relative"
+                            style={{ background: badge.avatarBg }}>
+                            {u.nome?.charAt(0).toUpperCase()}
+                            <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center"
+                              style={{ background: "#060e1f" }}>
+                              <RoleIcon style={{ height: 10, width: 10, color: badge.iconColor }} />
+                            </div>
                           </div>
-                          <p className="text-xs text-white/40 truncate">{u.email}</p>
-                        </div>
-                        {(u._id || u.id) !== user?.id && u.role !== "super_admin" && (
-                          <button onClick={() => deletarUsuario(u._id || u.id)}
-                            className="p-2 rounded-lg shrink-0" style={{ color: "#f87171" }}>
-                            <Trash2 style={{ height: 16, width: 16 }} />
-                          </button>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0 text-left">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="text-sm font-semibold text-white truncate">{u.nome}</p>
+                              {isSelf && (
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                                  style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)" }}>
+                                  Você
+                                </span>
+                              )}
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0" style={badge.style}>
+                                {badge.label}
+                              </span>
+                            </div>
+                            <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{u.email}</p>
+                          </div>
+
+                          <ChevronDown style={{
+                            height: 15, width: 15,
+                            color: "rgba(255,255,255,0.3)",
+                            transform: expandido ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "transform 0.2s"
+                          }} />
+                        </button>
+
+                        {/* Detalhes expandidos — só super admin vê */}
+                        {expandido && (
+                          <div className="px-5 pb-4 space-y-3"
+                            style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+
+                            {/* Infos detalhadas */}
+                            <div className="rounded-xl p-3 space-y-2 mt-2"
+                              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>E-mail</span>
+                                <span className="text-xs text-white/70">{u.email}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>Cadastrado em</span>
+                                <span className="text-xs text-white/70">{dataFormatada}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>ID</span>
+                                <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.3)" }}>{uid}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.3)" }}>Nível de acesso</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={badge.style}>{badge.label}</span>
+                              </div>
+                            </div>
+
+                            {/* Ações — só para não-protegidos e não-self */}
+                            {!isSelf && !isProtected && (
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => alterarRole(uid, u.nome, u.role)}
+                                  className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all"
+                                  style={u.role === "admin"
+                                    ? { background: "rgba(249,115,22,0.15)", color: "#fb923c", border: "1px solid rgba(249,115,22,0.25)" }
+                                    : { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.25)" }}>
+                                  {u.role === "admin" ? "↓ Rebaixar para Usuário" : "↑ Promover para Admin"}
+                                </button>
+                                <button
+                                  onClick={() => deletarUsuario(uid)}
+                                  className="px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
+                                  style={{ background: "rgba(239,68,68,0.15)", color: "#f87171", border: "1px solid rgba(239,68,68,0.25)" }}>
+                                  <Trash2 style={{ height: 14, width: 14 }} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                     );
