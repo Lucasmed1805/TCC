@@ -21,7 +21,7 @@ router.post("/cadastro", async (req, res) => {
   const user = await Usuario.create({ nome, email: emailLower, senha_hash, role: "user" });
 
   const token = jwt.sign({ id: user._id, nome, email: emailLower, role: "user" }, JWT_SECRET, { expiresIn: "7d" });
-  res.status(201).json({ token, user: { id: user._id, nome, email: emailLower, role: "user" } });
+  res.status(201).json({ token, user: { id: user._id, nome, email: emailLower, role: "user", turma: "", curso: "" } });
 });
 
 router.post("/solicitar", async (req, res) => {
@@ -85,7 +85,17 @@ router.post("/login", async (req, res) => {
     JWT_SECRET,
     { expiresIn: "7d" }
   );
-  res.json({ token, user: { id: user._id, nome: user.nome, email: user.email, role: user.role } });
+  res.json({
+    token,
+    user: {
+      id: user._id,
+      nome: user.nome,
+      email: user.email,
+      role: user.role,
+      turma: user.turma || "",
+      curso: user.curso || "",
+    },
+  });
 });
 
 router.get("/me", authMiddleware, async (req, res) => {
@@ -95,7 +105,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 router.put("/perfil", authMiddleware, async (req, res) => {
-  const { nome, senhaAtual, novaSenha } = req.body;
+  const { nome, turma, curso, senhaAtual, novaSenha } = req.body;
   if (!nome) return res.status(400).json({ error: "Nome é obrigatório." });
 
   const user = await Usuario.findById(req.user.id);
@@ -110,8 +120,21 @@ router.put("/perfil", authMiddleware, async (req, res) => {
   }
 
   user.nome = nome;
+  if (turma !== undefined) user.turma = turma;
+  if (curso !== undefined) user.curso = curso;
+
   await user.save();
-  res.json({ message: "Perfil atualizado com sucesso." });
+  res.json({
+    message: "Perfil atualizado com sucesso.",
+    user: {
+      id: user._id,
+      nome: user.nome,
+      email: user.email,
+      role: user.role,
+      turma: user.turma,
+      curso: user.curso,
+    },
+  });
 });
 
 module.exports = router;

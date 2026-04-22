@@ -5,6 +5,8 @@ const usuarioSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   senha_hash: String,
   role: { type: String, default: "user" },
+  turma: { type: String, default: "" },
+  curso: { type: String, default: "" },
 }, { timestamps: true });
 
 const tccSchema = new mongoose.Schema({
