@@ -7,33 +7,37 @@ router.post("/recomendar", async (req, res) => {
   const { ideia } = req.body;
 
   if (!ideia || ideia.trim().length < 5) {
-    return res.status(400).json({ error: "Descreva melhor sua ideia." });
+    return res.status(400).json({ error: "Digite uma pergunta ou ideia." });
   }
 
   try {
     const tccs = await Tcc.find().select("titulo autor curso ano resumo tipo");
 
-    if (tccs.length === 0) {
-      return res.json({ texto: "Ainda não há TCCs cadastrados no acervo.", recomendados: [] });
-    }
+    const listaFormatada = tccs.length > 0
+      ? tccs.map((t, i) =>
+          `[${i + 1}] Título: ${t.titulo} | Autor: ${t.autor} | Curso: ${t.curso} | Ano: ${t.ano} | Resumo: ${t.resumo || "Sem resumo"}`
+        ).join("\n")
+      : "Nenhum TCC cadastrado ainda.";
 
-    const listaFormatada = tccs.map((t, i) =>
-      `[${i + 1}] Título: ${t.titulo} | Autor: ${t.autor} | Curso: ${t.curso} | Ano: ${t.ano} | Resumo: ${t.resumo || "Sem resumo"}`
-    ).join("\n");
+    const prompt = `Você é um assistente virtual inteligente do TCC Digital, plataforma de trabalhos acadêmicos do CEEP (Centro Estadual de Educação Profissional).
 
-    const prompt = `Você é um assistente especializado em trabalhos acadêmicos do CEEP (Centro Estadual de Educação Profissional).
-Um aluno descreveu a ideia do TCC que quer fazer:
+Você pode responder qualquer tipo de pergunta: dúvidas gerais, curiosidades, perguntas sobre o site, sobre TCCs, sobre cursos, temas acadêmicos, tecnologia, ou qualquer outro assunto.
 
+Quando a pergunta for relacionada a TCCs ou ao acervo do site, use os dados abaixo como referência:
+
+--- ACERVO DO SITE ---
+${listaFormatada}
+--- FIM DO ACERVO ---
+
+Informações sobre o site:
+- Nome: TCC Digital CEEP
+- Funcionalidades: buscar TCCs por título ou autor, filtrar por categoria/curso/ano, visualizar detalhes de cada TCC, assistente de inspiração com IA.
+- Público: alunos e professores do CEEP.
+
+Pergunta/mensagem do usuário:
 "${ideia}"
 
-Abaixo estão os TCCs disponíveis no acervo:
-
-${listaFormatada}
-
-Com base na ideia do aluno, recomende os 3 TCCs mais relevantes para servir de inspiração.
-Para cada um, explique em 1-2 frases por que ele é relevante para a ideia do aluno.
-Responda em português, de forma amigável e motivadora.
-Formato: para cada TCC recomendado, informe o número entre colchetes [N], o título e a justificativa.`;
+Responda em português, de forma clara, amigável e útil. Se for uma recomendação de TCC, informe o número entre colchetes [N] de cada recomendado. Se for uma pergunta geral, apenas responda diretamente sem mencionar o acervo.`;
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -54,8 +58,9 @@ Formato: para cada TCC recomendado, informe o número entre colchetes [N], o tí
       return res.status(500).json({ error: "Erro ao consultar a IA." });
     }
 
-    const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar recomendações.";
+    const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar uma resposta.";
 
+    // Só extrai TCCs recomendados se houver índices na resposta
     const indices = [...texto.matchAll(/\[(\d+)\]/g)].map(m => parseInt(m[1]) - 1);
     const recomendados = indices
       .filter(i => i >= 0 && i < tccs.length)
@@ -71,7 +76,7 @@ Formato: para cada TCC recomendado, informe o número entre colchetes [N], o tí
 
   } catch (err) {
     console.error("Erro na rota IA:", err);
-    res.status(500).json({ error: "Erro interno ao processar recomendação." });
+    res.status(500).json({ error: "Erro interno ao processar sua pergunta." });
   }
 });
 
