@@ -48,7 +48,6 @@ const Admin = () => {
   const [formAberto, setFormAberto] = useState(false);
   const [criarAberto, setCriarAberto] = useState(false);
 
-  // Controla se a lista de usuários está visível
   const [listaUsuariosAberta, setListaUsuariosAberta] = useState(false);
 
   const [tccForm, setTccForm] = useState({
@@ -369,11 +368,10 @@ const Admin = () => {
               className="rounded-2xl overflow-hidden"
               style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}
             >
-              {/* Cabeçalho clicável — abre/fecha a lista */}
+              {/* Cabeçalho clicável */}
               <button
                 onClick={() => {
                   setListaUsuariosAberta(!listaUsuariosAberta);
-                  // Fecha o form de criar ao fechar a lista
                   if (listaUsuariosAberta) setCriarAberto(false);
                 }}
                 className="w-full px-5 py-4 flex items-center justify-between transition-all"
@@ -406,10 +404,9 @@ const Admin = () => {
                 </div>
               </button>
 
-              {/* Conteúdo — só aparece quando aberto */}
               {listaUsuariosAberta && (
                 <>
-                  {/* Botão Criar dentro do conteúdo */}
+                  {/* Botão Criar */}
                   <div
                     className="px-5 py-3 flex justify-start"
                     style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
@@ -428,7 +425,7 @@ const Admin = () => {
                     </button>
                   </div>
 
-                  {/* Formulário colapsável */}
+                  {/* Formulário criar usuário */}
                   {criarAberto && (
                     <div
                       className="px-5 py-4 space-y-3"
@@ -489,7 +486,7 @@ const Admin = () => {
                     </div>
                   )}
 
-                  {/* Lista com scroll interno */}
+                  {/* Lista de usuários */}
                   {usuarios.length === 0 ? (
                     <p className="text-sm text-white/30 text-center py-10">Nenhum usuário cadastrado.</p>
                   ) : (
@@ -567,6 +564,7 @@ const Admin = () => {
                                 className="px-5 pb-4 space-y-3"
                                 style={{ borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(255,255,255,0.01)" }}
                               >
+                                {/* Info do usuário */}
                                 <div
                                   className="rounded-xl p-3 space-y-2 mt-2"
                                   style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
@@ -586,23 +584,42 @@ const Admin = () => {
                                 </div>
 
                                 {!isSelf && !isProtected && (
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => alterarRole(uid, u.nome, u.role)}
-                                      className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all"
-                                      style={u.role === "admin"
-                                        ? { background: "rgba(249,115,22,0.15)", color: "#fb923c", border: "1px solid rgba(249,115,22,0.25)" }
-                                        : { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.25)" }}
-                                    >
-                                      {u.role === "admin" ? "↓ Rebaixar para Usuário" : "↑ Promover para Admin"}
-                                    </button>
-                                    <button
-                                      onClick={() => deletarUsuario(uid)}
-                                      className="px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
-                                      style={{ background: "rgba(239,68,68,0.15)", color: "#f87171", border: "1px solid rgba(239,68,68,0.25)" }}
-                                    >
-                                      <Trash2 style={{ height: 14, width: 14 }} />
-                                    </button>
+                                  <div className="flex flex-col gap-2">
+
+                                    {/* ── Botão Ver Perfil — visível para Admin e Super Admin, apenas em usuários comuns ── */}
+                                    {u.role === "user" && (
+                                      <button
+                                        onClick={() => navigate(`/perfil/${uid}`)}
+                                        className="w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                                        style={{
+                                          background: "rgba(96,165,250,0.12)",
+                                          color: "#93c5fd",
+                                          border: "1px solid rgba(96,165,250,0.25)",
+                                        }}
+                                      >
+                                        <User style={{ height: 13, width: 13 }} />
+                                        Ver Perfil
+                                      </button>
+                                    )}
+
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={() => alterarRole(uid, u.nome, u.role)}
+                                        className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all"
+                                        style={u.role === "admin"
+                                          ? { background: "rgba(249,115,22,0.15)", color: "#fb923c", border: "1px solid rgba(249,115,22,0.25)" }
+                                          : { background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.25)" }}
+                                      >
+                                        {u.role === "admin" ? "↓ Rebaixar para Usuário" : "↑ Promover para Admin"}
+                                      </button>
+                                      <button
+                                        onClick={() => deletarUsuario(uid)}
+                                        className="px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
+                                        style={{ background: "rgba(239,68,68,0.15)", color: "#f87171", border: "1px solid rgba(239,68,68,0.25)" }}
+                                      >
+                                        <Trash2 style={{ height: 14, width: 14 }} />
+                                      </button>
+                                    </div>
                                   </div>
                                 )}
                               </div>

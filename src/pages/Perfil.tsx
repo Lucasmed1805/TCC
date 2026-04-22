@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth, getToken } from "@/hooks/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { User, BookOpen, GraduationCap, Pencil, LogOut, ShieldCheck, Shield, ChevronDown, Check } from "lucide-react";
+import { User, BookOpen, GraduationCap, Pencil, LogOut, ShieldCheck, Shield, ChevronDown, Check, ArrowLeft } from "lucide-react";
 
 const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}`;
 
@@ -32,7 +32,6 @@ const StyledInput = ({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) 
   />
 );
 
-// Select 100% customizado — sem dropdown nativo do navegador
 const CustomSelect = ({
   value, onChange, options, placeholder,
 }: {
@@ -122,29 +121,68 @@ const CustomSelect = ({
 };
 
 const Perfil = () => {
-  const { user, logout, isLoggedIn } = useAuth();
+  const { user, logout, isLoggedIn, isAdmin, isSuperAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Se houver :id na URL, é um admin visualizando o perfil de outro usuário
+  const { id: perfilId } = useParams<{ id?: string }>();
+  const modoVisualizacao = !!perfilId && perfilId !== user?.id;
+
+  const [perfilExterno, setPerfilExterno] = useState<any>(null);
+  const [carregando, setCarregando] = useState(false);
 
   const [nome, setNome] = useState(user?.nome || "");
   const [turma, setTurma] = useState((user as any)?.turma || "");
   const [curso, setCurso] = useState((user as any)?.curso || "");
   const [salvando, setSalvando] = useState(false);
 
+  // Busca os dados do usuário externo quando estiver em modo visualização
+  useEffect(() => {
+    if (modoVisualizacao && (isAdmin || isSuperAdmin)) {
+      setCarregando(true);
+      fetch(`${API}/api/admin/usuarios/${perfilId}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setPerfilExterno(data);
+        })
+        .catch(() => {
+          toast({ title: "Erro ao carregar perfil.", variant: "destructive" });
+          navigate("/admin");
+        })
+        .finally(() => setCarregando(false));
+    }
+  }, [perfilId]);
+
   if (!isLoggedIn) {
     navigate("/login");
     return null;
   }
 
-  const roleBadge = () => {
-    if (user?.role === "super_admin") return { label: "Super Admin", color: "#f5a623", bg: "rgba(245,166,35,0.15)", border: "rgba(245,166,35,0.3)", Icon: ShieldCheck };
-    if (user?.role === "admin") return { label: "Administrador", color: "#fb923c", bg: "rgba(249,115,22,0.15)", border: "rgba(249,115,22,0.3)", Icon: Shield };
+  // Se tentou acessar /perfil/:id sem ser admin, redireciona
+  if (modoVisualizacao && !isAdmin && !isSuperAdmin) {
+    navigate("/");
+    return null;
+  }
+
+  const dadosExibidos = modoVisualizacao ? perfilExterno : user;
+
+  const roleBadge = (role?: string) => {
+    const r = role || dadosExibidos?.role;
+    if (r === "super_admin") return { label: "Super Admin", color: "#f5a623", bg: "rgba(245,166,35,0.15)", border: "rgba(245,166,35,0.3)", Icon: ShieldCheck };
+    if (r === "admin") return { label: "Administrador", color: "#fb923c", bg: "rgba(249,115,22,0.15)", border: "rgba(249,115,22,0.3)", Icon: Shield };
     return { label: "Usuário", color: "#60a5fa", bg: "rgba(59,130,246,0.15)", border: "rgba(59,130,246,0.3)", Icon: User };
   };
 
   const badge = roleBadge();
   const RoleIcon = badge.Icon;
-  const inicial = user?.nome?.charAt(0).toUpperCase() || "?";
+  const inicial = dadosExibidos?.nome?.charAt(0).toUpperCase() || "?";
+
+  const dataFormatada = dadosExibidos?.createdAt
+    ? new Date(dadosExibidos.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
+    : "—";
 
   const salvar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,6 +219,14 @@ const Perfil = () => {
     navigate("/");
   };
 
+  if (carregando) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#060e1f" }}>
+        <div className="h-8 w-8 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen" style={{ background: "#060e1f" }}>
 
@@ -190,9 +236,23 @@ const Perfil = () => {
         style={{ background: "linear-gradient(160deg,#0a1628,#0d2550 60%,#060e1f)" }}
       >
         <div className="max-w-lg mx-auto">
+
+          {/* Botão voltar — só aparece em modo visualização */}
+          {modoVisualizacao && (
+            <button
+              onClick={() => navigate("/admin")}
+              className="flex items-center gap-1.5 mb-4 text-xs font-semibold transition-all"
+              style={{ color: "rgba(255,255,255,0.45)" }}
+            >
+              <ArrowLeft style={{ height: 14, width: 14 }} />
+              Voltar para o painel
+            </button>
+          )}
+
           <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#60a5fa" }}>
-            Minha Conta
+            {modoVisualizacao ? "Visualizando Perfil" : "Minha Conta"}
           </p>
+
           <div className="flex items-center gap-4">
             <div
               className="h-16 w-16 rounded-2xl flex items-center justify-center text-2xl font-extrabold text-white shrink-0 relative"
@@ -207,8 +267,8 @@ const Perfil = () => {
               </div>
             </div>
             <div>
-              <h1 className="text-xl font-extrabold text-white">{user?.nome}</h1>
-              <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{user?.email}</p>
+              <h1 className="text-xl font-extrabold text-white">{dadosExibidos?.nome}</h1>
+              <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{dadosExibidos?.email}</p>
               <span
                 className="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
                 style={{ background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}
@@ -222,90 +282,131 @@ const Perfil = () => {
 
       <div className="px-5 pt-6 pb-10 max-w-lg mx-auto space-y-4">
 
-        {/* Formulário de edição */}
-        <div
-          className="rounded-2xl p-5 space-y-4"
-          style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <Pencil style={{ height: 15, width: 15, color: "#60a5fa" }} />
-            <p className="text-sm font-semibold text-white">Editar Perfil</p>
-          </div>
+        {/* ── MODO VISUALIZAÇÃO (admin vendo perfil de outro usuário) ── */}
+        {modoVisualizacao ? (
+          <div
+            className="rounded-2xl p-5 space-y-3"
+            style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}
+          >
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-1">Informações do Usuário</p>
 
-          <form onSubmit={salvar} className="space-y-4">
-            <Field label="Nome de exibição" icon={<User style={{ height: 11, width: 11 }} />}>
-              <StyledInput
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-                placeholder="Seu nome completo"
-              />
-            </Field>
-
-            <Field label="Curso" icon={<BookOpen style={{ height: 11, width: 11 }} />}>
-              <CustomSelect
-                value={curso}
-                onChange={setCurso}
-                options={cursos}
-                placeholder="Selecione seu curso"
-              />
-            </Field>
-
-            <Field label="Turma" icon={<GraduationCap style={{ height: 11, width: 11 }} />}>
-              <CustomSelect
-                value={turma}
-                onChange={setTurma}
-                options={turmas}
-                placeholder="Selecione sua turma"
-              />
-            </Field>
-
-            <button
-              type="submit"
-              disabled={salvando}
-              className="w-full py-4 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
-              style={{
-                background: "linear-gradient(135deg,#1a4fa0,#2563eb)",
-                boxShadow: "0 4px 20px rgba(37,99,235,0.25)",
-              }}
+            {/* Badge de visualização somente leitura */}
+            <div
+              className="flex items-center gap-2 px-3 py-2 rounded-xl mb-2"
+              style={{ background: "rgba(245,166,35,0.08)", border: "1px solid rgba(245,166,35,0.2)" }}
             >
-              {salvando ? (
-                <><div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Salvando...</>
-              ) : (
-                <><Pencil style={{ height: 15, width: 15 }} /> Salvar Alterações</>
-              )}
-            </button>
-          </form>
-        </div>
-
-        {/* Info somente leitura */}
-        <div
-          className="rounded-2xl p-5 space-y-3"
-          style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}
-        >
-          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Informações da Conta</p>
-          {[
-            { label: "E-mail", value: user?.email },
-            { label: "Nível de acesso", value: badge.label },
-            { label: "Curso", value: (user as any)?.curso || curso || "—" },
-            { label: "Turma", value: (user as any)?.turma || turma || "—" },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-              <span className="text-xs text-white/40">{label}</span>
-              <span className="text-xs font-medium text-white/80">{value}</span>
+              <ShieldCheck style={{ height: 12, width: 12, color: "#f5a623", flexShrink: 0 }} />
+              <p className="text-[10px] font-semibold" style={{ color: "#f5a623" }}>
+                Você está visualizando este perfil como administrador — somente leitura
+              </p>
             </div>
-          ))}
-        </div>
 
-        {/* Botão sair */}
-        <button
-          onClick={handleLogout}
-          className="w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-          style={{ background: "rgba(239,68,68,0.1)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)" }}
-        >
-          <LogOut style={{ height: 15, width: 15 }} />
-          Sair da Conta
-        </button>
+            {[
+              { label: "Nome", value: dadosExibidos?.nome || "—" },
+              { label: "E-mail", value: dadosExibidos?.email || "—" },
+              { label: "Nível de acesso", value: badge.label },
+              { label: "Curso", value: dadosExibidos?.curso || "—" },
+              { label: "Turma", value: dadosExibidos?.turma || "—" },
+              { label: "Cadastrado em", value: dataFormatada },
+            ].map(({ label, value }) => (
+              <div
+                key={label}
+                className="flex items-center justify-between py-2.5"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+              >
+                <span className="text-xs text-white/40">{label}</span>
+                <span className="text-xs font-medium text-white/80">{value}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* ── MODO NORMAL (usuário editando o próprio perfil) ── */
+          <>
+            <div
+              className="rounded-2xl p-5 space-y-4"
+              style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Pencil style={{ height: 15, width: 15, color: "#60a5fa" }} />
+                <p className="text-sm font-semibold text-white">Editar Perfil</p>
+              </div>
+
+              <form onSubmit={salvar} className="space-y-4">
+                <Field label="Nome de exibição" icon={<User style={{ height: 11, width: 11 }} />}>
+                  <StyledInput
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    required
+                    placeholder="Seu nome completo"
+                  />
+                </Field>
+
+                <Field label="Curso" icon={<BookOpen style={{ height: 11, width: 11 }} />}>
+                  <CustomSelect
+                    value={curso}
+                    onChange={setCurso}
+                    options={cursos}
+                    placeholder="Selecione seu curso"
+                  />
+                </Field>
+
+                <Field label="Turma" icon={<GraduationCap style={{ height: 11, width: 11 }} />}>
+                  <CustomSelect
+                    value={turma}
+                    onChange={setTurma}
+                    options={turmas}
+                    placeholder="Selecione sua turma"
+                  />
+                </Field>
+
+                <button
+                  type="submit"
+                  disabled={salvando}
+                  className="w-full py-4 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
+                  style={{
+                    background: "linear-gradient(135deg,#1a4fa0,#2563eb)",
+                    boxShadow: "0 4px 20px rgba(37,99,235,0.25)",
+                  }}
+                >
+                  {salvando ? (
+                    <><div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Salvando...</>
+                  ) : (
+                    <><Pencil style={{ height: 15, width: 15 }} /> Salvar Alterações</>
+                  )}
+                </button>
+              </form>
+            </div>
+
+            {/* Info somente leitura */}
+            <div
+              className="rounded-2xl p-5 space-y-3"
+              style={{ background: "#111f38", border: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Informações da Conta</p>
+              {[
+                { label: "E-mail", value: user?.email },
+                { label: "Nível de acesso", value: badge.label },
+                { label: "Curso", value: (user as any)?.curso || curso || "—" },
+                { label: "Turma", value: (user as any)?.turma || turma || "—" },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                  <span className="text-xs text-white/40">{label}</span>
+                  <span className="text-xs font-medium text-white/80">{value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Botão sair */}
+            <button
+              onClick={handleLogout}
+              className="w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+              style={{ background: "rgba(239,68,68,0.1)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)" }}
+            >
+              <LogOut style={{ height: 15, width: 15 }} />
+              Sair da Conta
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
