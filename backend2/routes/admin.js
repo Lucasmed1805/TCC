@@ -30,6 +30,13 @@ router.get("/usuarios", adminMiddleware, async (req, res) => {
   res.json(usuarios);
 });
 
+// ── Buscar um usuário pelo ID (para visualização de perfil pelo admin) ──
+router.get("/usuarios/:id", adminMiddleware, async (req, res) => {
+  const usuario = await Usuario.findById(req.params.id).select("-senha_hash");
+  if (!usuario) return res.status(404).json({ error: "Usuário não encontrado." });
+  res.json(usuario);
+});
+
 router.put("/usuarios/:id/role", superAdminMiddleware, async (req, res) => {
   const { role } = req.body;
   if (!["admin", "user"].includes(role))
