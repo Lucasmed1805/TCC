@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, getToken } from "@/hooks/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { User, BookOpen, GraduationCap, Pencil, LogOut, ShieldCheck, Shield } from "lucide-react";
+import { User, BookOpen, GraduationCap, Pencil, LogOut, ShieldCheck, Shield, ChevronDown, Check } from "lucide-react";
 
 const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}`;
 
@@ -32,15 +32,94 @@ const StyledInput = ({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) 
   />
 );
 
-const StyledSelect = ({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) => (
-  <select
-    {...props}
-    className={inputClass}
-    style={{ ...inputStyle, color: "white", colorScheme: "dark" }}
-  >
-    {children}
-  </select>
-);
+// Select 100% customizado — sem dropdown nativo do navegador
+const CustomSelect = ({
+  value, onChange, options, placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  placeholder: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full rounded-xl px-4 py-3 text-sm text-left flex items-center justify-between transition-all"
+        style={open ? inputFocusStyle : inputStyle}
+      >
+        <span style={{ color: value ? "white" : "rgba(255,255,255,0.35)" }}>
+          {value || placeholder}
+        </span>
+        <ChevronDown
+          style={{
+            height: 15, width: 15,
+            color: "rgba(255,255,255,0.4)",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s",
+            flexShrink: 0,
+          }}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden"
+          style={{
+            background: "#0f1f3d",
+            border: "1px solid rgba(96,165,250,0.25)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => { onChange(""); setOpen(false); }}
+            className="w-full px-4 py-3 text-sm text-left transition-all"
+            style={{ color: "rgba(255,255,255,0.35)", background: "transparent" }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+          >
+            {placeholder}
+          </button>
+          {options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => { onChange(opt); setOpen(false); }}
+              className="w-full px-4 py-3 text-sm text-left transition-all flex items-center justify-between"
+              style={{
+                color: value === opt ? "#60a5fa" : "white",
+                background: value === opt ? "rgba(96,165,250,0.1)" : "transparent",
+                borderTop: "1px solid rgba(255,255,255,0.04)",
+              }}
+              onMouseEnter={(e) => {
+                if (value !== opt) e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = value === opt ? "rgba(96,165,250,0.1)" : "transparent";
+              }}
+            >
+              {opt}
+              {value === opt && <Check style={{ height: 13, width: 13, color: "#60a5fa", flexShrink: 0 }} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Perfil = () => {
   const { user, logout, isLoggedIn } = useAuth();
@@ -81,7 +160,6 @@ const Perfil = () => {
       });
 
       if (res.ok) {
-        // Atualiza o usuário no localStorage com os novos dados
         const stored = localStorage.getItem("tcc_user");
         if (stored) {
           const parsed = JSON.parse(stored);
@@ -115,8 +193,6 @@ const Perfil = () => {
           <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#60a5fa" }}>
             Minha Conta
           </p>
-
-          {/* Avatar + info */}
           <div className="flex items-center gap-4">
             <div
               className="h-16 w-16 rounded-2xl flex items-center justify-center text-2xl font-extrabold text-white shrink-0 relative"
@@ -167,17 +243,21 @@ const Perfil = () => {
             </Field>
 
             <Field label="Curso" icon={<BookOpen style={{ height: 11, width: 11 }} />}>
-              <StyledSelect value={curso} onChange={(e) => setCurso(e.target.value)}>
-                <option value="">Selecione seu curso</option>
-                {cursos.map((c) => <option key={c} value={c}>{c}</option>)}
-              </StyledSelect>
+              <CustomSelect
+                value={curso}
+                onChange={setCurso}
+                options={cursos}
+                placeholder="Selecione seu curso"
+              />
             </Field>
 
             <Field label="Turma" icon={<GraduationCap style={{ height: 11, width: 11 }} />}>
-              <StyledSelect value={turma} onChange={(e) => setTurma(e.target.value)}>
-                <option value="">Selecione sua turma</option>
-                {turmas.map((t) => <option key={t} value={t}>{t}</option>)}
-              </StyledSelect>
+              <CustomSelect
+                value={turma}
+                onChange={setTurma}
+                options={turmas}
+                placeholder="Selecione sua turma"
+              />
             </Field>
 
             <button
