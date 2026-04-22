@@ -7,6 +7,8 @@ export interface AuthUser {
   nome: string;
   email: string;
   role: UserRole;
+  turma?: string;
+  curso?: string;
 }
 
 interface AuthContextType {
@@ -17,7 +19,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   cadastro: (nome: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
-  atualizarPerfil: (nome: string, senhaAtual?: string, novaSenha?: string) => Promise<{ ok: boolean; error?: string }>;
+  atualizarPerfil: (nome: string, turma?: string, curso?: string, senhaAtual?: string, novaSenha?: string) => Promise<{ ok: boolean; error?: string }>;
 };
 
 // ================== CONFIGURAÇÃO DO BACKEND ==================
@@ -94,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
-  const atualizarPerfil = async (nome: string, senhaAtual?: string, novaSenha?: string) => {
+  const atualizarPerfil = async (nome: string, turma?: string, curso?: string, senhaAtual?: string, novaSenha?: string) => {
     try {
       const res = await fetch(`${API}/auth/perfil`, {
         method: "PUT",
@@ -102,13 +104,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
         },
-        body: JSON.stringify({ nome, senhaAtual, novaSenha }),
+        body: JSON.stringify({ nome, turma, curso, senhaAtual, novaSenha }),
       });
 
       const data = await res.json();
       if (!res.ok) return { ok: false, error: data.error || "Erro ao atualizar perfil." };
 
-      const userAtualizado = { ...user!, nome };
+      const userAtualizado: AuthUser = { ...user!, nome, turma, curso };
       localStorage.setItem(USER_KEY, JSON.stringify(userAtualizado));
       setUser(userAtualizado);
       return { ok: true };

@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Solicitar from "./pages/Solicitar";
 import Admin from "./pages/Admin";
+import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/cadastro"   element={<Cadastro />} />
                 <Route path="/solicitar"  element={<Solicitar />} />
                 <Route path="/admin"      element={<Admin />} />
+                <Route path="/perfil"     element={<Perfil />} />
                 <Route path="*"           element={<NotFound />} />
               </Routes>
             </main>
