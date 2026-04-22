@@ -9,7 +9,6 @@ const iaRoutes = require("./routes/ia");
 const { initDB } = require("./database/db");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
   origin: [
@@ -24,7 +23,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -35,6 +33,15 @@ app.use("/api/ia", iaRoutes);
 
 app.get("/", (req, res) => res.json({ message: "TCC Digital API rodando!" }));
 
-initDB().then(() => {
-  app.listen(PORT, () => console.log(`✅ Servidor rodando em http://localhost:${PORT}`));
-});
+// ✅ Para rodar local ainda funciona
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3001;
+  initDB().then(() => {
+    app.listen(PORT, () => console.log(`✅ Servidor rodando em http://localhost:${PORT}`));
+  });
+} else {
+  // ✅ No Vercel conecta ao banco antes de cada request
+  initDB().catch(console.error);
+}
+
+module.exports = app;
