@@ -111,13 +111,17 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-2">
           {isLoggedIn ? (
             <>
-              <div className="flex items-center gap-2 text-sm">
+              {/* Nome clicável que leva ao perfil */}
+              <Link
+                to="/perfil"
+                className="flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg transition-all hover:bg-white/10"
+              >
                 <User className="h-4 w-4" style={{ color: "#f5a623" }} />
                 <span className="font-medium text-white">{user?.nome}</span>
                 <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={badge.style}>
                   {badge.label}
                 </span>
-              </div>
+              </Link>
 
               {isSuperAdmin && (
                 <div className="relative" ref={sininhoRef}>
@@ -274,7 +278,12 @@ const Navbar = () => {
               <div className="mt-3 pt-3 border-t border-white/10 flex flex-col gap-2">
                 {isLoggedIn ? (
                   <>
-                    <div className="flex items-center gap-2 px-2 py-1">
+                    {/* Avatar clicável que leva ao perfil no mobile */}
+                    <Link
+                      to="/perfil"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-white/10 transition-all"
+                    >
                       <div className="h-8 w-8 rounded-full flex items-center justify-center"
                         style={{ background: "rgba(245,166,35,0.15)" }}>
                         <User className="h-4 w-4" style={{ color: "#f5a623" }} />
@@ -285,7 +294,7 @@ const Navbar = () => {
                           {badge.label}
                         </span>
                       </div>
-                    </div>
+                    </Link>
                     {isAdmin && (
                       <Link to="/admin" onClick={() => setOpen(false)}
                         className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-white/70 hover:text-white border border-white/10">
