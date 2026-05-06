@@ -47,6 +47,13 @@ const Cadastro = () => {
           </div>
           <h1 className="font-serif text-2xl font-bold text-foreground">Criar Conta</h1>
           <p className="text-sm text-muted-foreground mt-1">Acesse o acervo de TCCs do CEEP</p>
+
+          {/* Badge: tipo de conta */}
+          <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+            style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe" }}>
+            <User className="h-3 w-3" />
+            Usuário Comum
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-border/40 bg-card/50 p-6">
