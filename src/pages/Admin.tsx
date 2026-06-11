@@ -76,7 +76,12 @@ const Admin = () => {
 
   const carregarUsuarios = () =>
     fetch(`${API}/api/admin/usuarios`, { headers: { Authorization: `Bearer ${getToken()}` } })
-      .then((r) => r.json()).then(setUsuarios).catch(() => {});
+      .then((r) => r.json())
+      .then((data) => {
+        // Garantir que sempre é um array
+        setUsuarios(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setUsuarios([]));
 
   const salvarTcc = async (e: React.FormEvent) => {
     e.preventDefault();
