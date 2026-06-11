@@ -1,23 +1,24 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const { Tcc } = require("../database/models");
 const { adminMiddleware } = require("../middleware/auth");
+const cloudinary = require("cloudinary").v2;
+const { Readable } = require("stream");
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, "..", "uploads")),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
-  },
+// ── Configuração do Cloudinary ──
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// ── Multer em memória (não salva no disco) ──
 const upload = multer({
-  storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // ✅ aumentado para 50MB
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype !== "application/pdf")
       return cb(new Error("Apenas arquivos PDF são permitidos."));
@@ -25,7 +26,6 @@ const upload = multer({
   },
 });
 
-// ✅ Wrapper que captura erros do multer e retorna JSON em vez de pendurar
 const uploadMiddleware = (req, res, next) => {
   upload.single("arquivo")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
@@ -38,10 +38,29 @@ const uploadMiddleware = (req, res, next) => {
   });
 };
 
+// ── Faz upload do buffer para o Cloudinary ──
+const uploadToCloudinary = (buffer, filename) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "raw",
+        public_id: `tccs/${uuidv4()}-${filename}`,
+        format: "pdf",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    Readable.from(buffer).pipe(stream);
+  });
+};
+
+// ── Rotas ──
+
 router.get("/", async (req, res) => {
   const { curso, tipo, q } = req.query;
   let query = {};
-
   if (curso) query.curso = curso;
   if (tipo) query.tipo = tipo;
   if (q) {
@@ -51,7 +70,6 @@ router.get("/", async (req, res) => {
       { resumo: { $regex: q, $options: "i" } },
     ];
   }
-
   const tccs = await Tcc.find(query).sort({ createdAt: -1 });
   res.json(tccs);
 });
@@ -59,7 +77,6 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const tcc = await Tcc.findById(req.params.id);
   if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
-
   tcc.visualizacoes = (tcc.visualizacoes || 0) + 1;
   await tcc.save();
   res.json(tcc);
@@ -71,7 +88,11 @@ router.post("/", adminMiddleware, uploadMiddleware, async (req, res) => {
     if (!titulo || !autor || !curso || !ano)
       return res.status(400).json({ error: "Preencha os campos obrigatórios." });
 
-    const arquivo_url = req.file ? `/uploads/${req.file.filename}` : null;
+    let arquivo_url = null;
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+      arquivo_url = result.secure_url;
+    }
 
     const tcc = await Tcc.create({
       titulo, autor, curso,
@@ -95,7 +116,11 @@ router.put("/:id", adminMiddleware, uploadMiddleware, async (req, res) => {
     const tcc = await Tcc.findById(req.params.id);
     if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
 
-    const arquivo_url = req.file ? `/uploads/${req.file.filename}` : tcc.arquivo_url;
+    let arquivo_url = tcc.arquivo_url;
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+      arquivo_url = result.secure_url;
+    }
 
     Object.assign(tcc, {
       titulo: titulo || tcc.titulo,
@@ -118,7 +143,6 @@ router.put("/:id", adminMiddleware, uploadMiddleware, async (req, res) => {
 router.delete("/:id", adminMiddleware, async (req, res) => {
   const tcc = await Tcc.findById(req.params.id);
   if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
-
   await Tcc.findByIdAndDelete(req.params.id);
   res.json({ message: "TCC removido com sucesso." });
 });
