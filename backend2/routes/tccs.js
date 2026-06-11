@@ -1,4 +1,3 @@
-cat > /home/claude/tccs.js << 'EOF'
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -9,16 +8,14 @@ const { createClient } = require("@supabase/supabase-js");
 
 const router = express.Router();
 
-// ── Configuração do Supabase ──
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// ── Multer em memória ──
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (file.mimetype !== "application/pdf")
       return cb(new Error("Apenas arquivos PDF são permitidos."));
@@ -38,28 +35,16 @@ const uploadMiddleware = (req, res, next) => {
   });
 };
 
-// ── Faz upload do buffer para o Supabase Storage ──
 const uploadToSupabase = async (buffer, originalname) => {
   const ext = path.extname(originalname);
   const filename = `${uuidv4()}${ext}`;
-
   const { data, error } = await supabase.storage
     .from("tccs")
-    .upload(filename, buffer, {
-      contentType: "application/pdf",
-      upsert: false,
-    });
-
+    .upload(filename, buffer, { contentType: "application/pdf", upsert: false });
   if (error) throw error;
-
-  const { data: publicData } = supabase.storage
-    .from("tccs")
-    .getPublicUrl(filename);
-
+  const { data: publicData } = supabase.storage.from("tccs").getPublicUrl(filename);
   return publicData.publicUrl;
 };
-
-// ── Rotas ──
 
 router.get("/", async (req, res) => {
   const { curso, tipo, q } = req.query;
@@ -90,12 +75,10 @@ router.post("/", adminMiddleware, uploadMiddleware, async (req, res) => {
     const { titulo, autor, curso, ano, resumo, tipo } = req.body;
     if (!titulo || !autor || !curso || !ano)
       return res.status(400).json({ error: "Preencha os campos obrigatórios." });
-
     let arquivo_url = null;
     if (req.file) {
       arquivo_url = await uploadToSupabase(req.file.buffer, req.file.originalname);
     }
-
     const tcc = await Tcc.create({
       titulo, autor, curso,
       ano: parseInt(ano),
@@ -104,7 +87,6 @@ router.post("/", adminMiddleware, uploadMiddleware, async (req, res) => {
       arquivo_url,
       usuario_id: req.user.id,
     });
-
     res.status(201).json(tcc);
   } catch (err) {
     console.error("Erro ao criar TCC:", err);
@@ -117,12 +99,10 @@ router.put("/:id", adminMiddleware, uploadMiddleware, async (req, res) => {
     const { titulo, autor, curso, ano, resumo, tipo } = req.body;
     const tcc = await Tcc.findById(req.params.id);
     if (!tcc) return res.status(404).json({ error: "TCC não encontrado." });
-
     let arquivo_url = tcc.arquivo_url;
     if (req.file) {
       arquivo_url = await uploadToSupabase(req.file.buffer, req.file.originalname);
     }
-
     Object.assign(tcc, {
       titulo: titulo || tcc.titulo,
       autor: autor || tcc.autor,
@@ -132,7 +112,6 @@ router.put("/:id", adminMiddleware, uploadMiddleware, async (req, res) => {
       tipo: tipo || tcc.tipo,
       arquivo_url,
     });
-
     await tcc.save();
     res.json(tcc);
   } catch (err) {
@@ -158,4 +137,3 @@ router.post("/:id/download", async (req, res) => {
 });
 
 module.exports = router;
-EOF
