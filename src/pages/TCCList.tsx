@@ -97,6 +97,7 @@ const ChatIA = () => {
           style={{ background: "rgba(37,99,235,0.2)", border: "1px solid rgba(96,165,250,0.2)" }}
         >
           <Sparkles style={{ height: 17, width: 17, color: "#60a5fa" }} />
+          {/* dot animado */}
           <span
             className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full flex items-center justify-center"
             style={{ background: "#060e1f" }}
@@ -138,6 +139,7 @@ const ChatIA = () => {
           scrollbarColor: "rgba(96,165,250,0.12) transparent",
         }}
       >
+        {/* Estado inicial — sugestões */}
         {mensagens.length === 0 && (
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.25)" }}>
@@ -177,6 +179,7 @@ const ChatIA = () => {
           </div>
         )}
 
+        {/* Mensagens */}
         {mensagens.map((msg, i) => (
           <div key={i}>
             {msg.tipo === "usuario" && (
@@ -198,6 +201,7 @@ const ChatIA = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-3"
               >
+                {/* Texto da resposta */}
                 <div
                   className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm"
                   style={{
@@ -211,6 +215,7 @@ const ChatIA = () => {
                   {msg.texto}
                 </div>
 
+                {/* Cards dos TCCs recomendados */}
                 {msg.recomendados && msg.recomendados.length > 0 && (
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-semibold uppercase tracking-wider px-1" style={{ color: "rgba(255,255,255,0.25)" }}>
@@ -268,6 +273,7 @@ const ChatIA = () => {
           </div>
         ))}
 
+        {/* Loading */}
         {carregando && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -353,8 +359,7 @@ const TCCList = () => {
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
   useEffect(() => {
-    // ✅ CORRIGIDO: adicionado /api/ na rota
-    fetch(`${API}/api/tccs`)
+    fetch(`${API}/tccs`)
       .then((r) => r.json())
       .then((data) => { setTccs(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
