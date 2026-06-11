@@ -1,21 +1,21 @@
+cat > /home/claude/tccs.js << 'EOF'
 const express = require("express");
 const multer = require("multer");
+const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const { Tcc } = require("../database/models");
 const { adminMiddleware } = require("../middleware/auth");
-const cloudinary = require("cloudinary").v2;
-const { Readable } = require("stream");
+const { createClient } = require("@supabase/supabase-js");
 
 const router = express.Router();
 
-// ── Configuração do Cloudinary ──
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// ── Configuração do Supabase ──
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
 
-// ── Multer em memória (não salva no disco) ──
+// ── Multer em memória ──
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
@@ -38,22 +38,25 @@ const uploadMiddleware = (req, res, next) => {
   });
 };
 
-// ── Faz upload do buffer para o Cloudinary ──
-const uploadToCloudinary = (buffer, filename) => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        resource_type: "raw",
-        public_id: `tccs/${uuidv4()}-${filename}`,
-        format: "pdf",
-      },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
-    Readable.from(buffer).pipe(stream);
-  });
+// ── Faz upload do buffer para o Supabase Storage ──
+const uploadToSupabase = async (buffer, originalname) => {
+  const ext = path.extname(originalname);
+  const filename = `${uuidv4()}${ext}`;
+
+  const { data, error } = await supabase.storage
+    .from("tccs")
+    .upload(filename, buffer, {
+      contentType: "application/pdf",
+      upsert: false,
+    });
+
+  if (error) throw error;
+
+  const { data: publicData } = supabase.storage
+    .from("tccs")
+    .getPublicUrl(filename);
+
+  return publicData.publicUrl;
 };
 
 // ── Rotas ──
@@ -90,8 +93,7 @@ router.post("/", adminMiddleware, uploadMiddleware, async (req, res) => {
 
     let arquivo_url = null;
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
-      arquivo_url = result.secure_url;
+      arquivo_url = await uploadToSupabase(req.file.buffer, req.file.originalname);
     }
 
     const tcc = await Tcc.create({
@@ -118,8 +120,7 @@ router.put("/:id", adminMiddleware, uploadMiddleware, async (req, res) => {
 
     let arquivo_url = tcc.arquivo_url;
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
-      arquivo_url = result.secure_url;
+      arquivo_url = await uploadToSupabase(req.file.buffer, req.file.originalname);
     }
 
     Object.assign(tcc, {
@@ -157,3 +158,4 @@ router.post("/:id/download", async (req, res) => {
 });
 
 module.exports = router;
+EOF
