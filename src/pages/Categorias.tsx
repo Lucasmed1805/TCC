@@ -27,7 +27,8 @@ const Categorias = () => {
   const [busca, setBusca] = useState("");
 
   useEffect(() => {
-    fetch(`${API}/tccs`)
+    // ✅ CORRIGIDO: adicionado /api/
+    fetch(`${API}/api/tccs`)
       .then((r) => r.json())
       .then((data) => { setTccs(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));

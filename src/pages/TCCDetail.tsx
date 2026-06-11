@@ -12,7 +12,8 @@ const TCCDetail = () => {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    fetch(`${API}/tccs/${id}`)
+    // ✅ CORRIGIDO: adicionado /api/
+    fetch(`${API}/api/tccs/${id}`)
       .then((r) => r.json())
       .then((data) => { setTcc(data); setLoading(false); })
       .catch(() => setLoading(false));
@@ -21,7 +22,8 @@ const TCCDetail = () => {
   const handleDownload = async () => {
     setDownloading(true);
     try {
-      await fetch(`${API}/tccs/${id}/download`, { method: "POST" });
+      // ✅ CORRIGIDO: adicionado /api/
+      await fetch(`${API}/api/tccs/${id}/download`, { method: "POST" });
       if (tcc?.arquivo_url) {
         window.open(tcc.arquivo_url.startsWith("http") ? tcc.arquivo_url : `${API}${tcc.arquivo_url}`, "_blank");
       }
