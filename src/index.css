@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,44 +6,41 @@
 
 @layer base {
   :root {
-    --background: 220 15% 7%;
+    --background: 214 47% 7%;
     --foreground: 220 10% 92%;
 
-    --card: 220 15% 10%;
+    --card: 215 40% 10%;
     --card-foreground: 220 10% 92%;
 
-    --popover: 220 15% 10%;
+    --popover: 215 40% 10%;
     --popover-foreground: 220 10% 92%;
 
-    --primary: 220 15% 13%;
+    --primary: 215 40% 13%;
     --primary-foreground: 220 10% 92%;
 
-    --secondary: 220 12% 16%;
+    --secondary: 215 35% 16%;
     --secondary-foreground: 220 10% 75%;
 
-    --muted: 220 12% 14%;
+    --muted: 215 35% 14%;
     --muted-foreground: 220 8% 50%;
 
-    --accent: 43 65% 55%;
-    --accent-foreground: 220 20% 8%;
+    --accent: 43 78% 38%;
+    --accent-foreground: 43 78% 90%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 12% 16%;
-    --input: 220 12% 18%;
-    --ring: 43 65% 55%;
+    --border: 215 30% 14%;
+    --input: 215 30% 16%;
+    --ring: 43 78% 38%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 220 15% 6%;
-    --sidebar-foreground: 220 10% 85%;
-    --sidebar-primary: 43 65% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 14%;
-    --sidebar-accent-foreground: 220 10% 85%;
-    --sidebar-border: 220 12% 14%;
-    --sidebar-ring: 43 65% 55%;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --navy: #08111e;
+    --navy-mid: #0b1624;
+    --navy-deep: #070e19;
   }
 }
 
@@ -54,47 +51,87 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', sans-serif;
+    background-color: #08111e;
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
   }
-  ::-webkit-scrollbar-track {
-    background: hsl(220 15% 7%);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: hsl(220 12% 20%);
-    border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(220 12% 28%);
-  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #08111e; }
+  ::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.25); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.45); }
 }
 
 @layer utilities {
-  .text-gradient-gold {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(43 65% 55%), hsl(43 70% 72%));
+  .font-display {
+    font-family: 'Playfair Display', serif;
   }
-  .bg-gradient-hero {
-    background: linear-gradient(105deg, #0a1628 0%, #0d2550 45%, #183a6e 75%, #0a1628 100%);
+
+  .text-gold {
+    color: #b8860b;
   }
-  .bg-gradient-card {
-    background: linear-gradient(145deg, hsl(220 15% 11%), hsl(220 15% 9%));
+
+  .bg-navy { background-color: #08111e; }
+  .bg-navy-mid { background-color: #0b1624; }
+  .bg-navy-deep { background-color: #070e19; }
+
+  .border-gold {
+    border-color: rgba(184,134,11,0.3);
   }
-  .bg-gradient-navy {
-    background: linear-gradient(135deg, #0a1628, #183a6e);
-  }
-  .glow-gold {
-    box-shadow: 0 0 20px hsl(22 93% 46% / 0.15), 0 0 60px hsl(22 93% 46% / 0.05);
-  }
+
   .carousel-scroll {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
   .carousel-scroll::-webkit-scrollbar {
     display: none;
+  }
+
+  .gold-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .gold-divider::before,
+  .gold-divider::after {
+    content: '';
+    width: 48px;
+    height: 1px;
+    background: rgba(184,134,11,0.4);
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.7s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-glow-pulse {
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
+  }
+
+  .btn-gold-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-gold-shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.45s;
+  }
+  .btn-gold-shine:hover::after {
+    transform: translateX(100%);
   }
 }
