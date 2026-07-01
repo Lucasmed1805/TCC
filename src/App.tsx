@@ -23,18 +23,14 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <ThemeProvider>
-            {/* Outer shell: sidebar + main column */}
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
             <div className="flex min-h-screen">
-              {/* Sidebar — visible md+ */}
               <Sidebar />
-
-              {/* Main column: navbar + content + footer */}
               <div className="flex flex-col flex-1 min-w-0">
                 <Navbar />
                 <main className="flex-1">
@@ -55,10 +51,10 @@ const App = () => (
                 <Footer />
               </div>
             </div>
-          </ThemeProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
