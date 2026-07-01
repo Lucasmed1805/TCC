@@ -1,22 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Menu, X, LogIn, LogOut, User, Settings, Bell, Check, Trash2 } from "lucide-react";
+import { BookOpen, Menu, X, LogIn, LogOut, User, Settings, Bell, Check, Trash2, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth, getToken } from "@/hooks/AuthContext";
+import { useTheme } from "@/hooks/ThemeContext";
 
 const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api`;
 
 const navItems = [
-  { label: "Início", path: "/" },
-  { label: "TCCs", path: "/tccs" },
+  { label: "Início",     path: "/" },
+  { label: "TCCs",       path: "/tccs" },
   { label: "Categorias", path: "/categorias" },
+  { label: "Sobre",      path: "/sobre" },
 ];
 
 const roleBadge = (role?: string) => {
   if (role === "super_admin") return { label: "Super Admin", style: { background: "rgba(124,58,237,0.15)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" } };
   if (role === "admin")       return { label: "Admin",       style: { background: "rgba(184,134,11,0.12)", color: "#b8860b", border: "1px solid rgba(184,134,11,0.3)" } };
-  return                             { label: "Usuário",     style: { background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" } };
+  return                             { label: "Usuário",     style: { background: "rgba(128,128,128,0.12)", color: "rgba(128,128,128,0.7)", border: "1px solid rgba(128,128,128,0.2)" } };
 };
 
 const Navbar = () => {
@@ -26,7 +28,17 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isLoggedIn, isAdmin, isSuperAdmin, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const sininhoRef = useRef<HTMLDivElement>(null);
+
+  // ── theme tokens ──────────────────────────────────────────────────────────
+  const navBg      = isDark ? "rgba(8,17,30,0.88)"        : "rgba(240,244,248,0.92)";
+  const navBorder  = isDark ? "rgba(255,255,255,0.06)"     : "rgba(0,0,0,0.08)";
+  const textMuted  = isDark ? "rgba(255,255,255,0.4)"      : "rgba(0,0,0,0.4)";
+  const textActive = isDark ? "#ffffff"                    : "#08111e";
+  const mobileBg   = isDark ? "#0b1624"                    : "#e8edf2";
+  const dropBg     = isDark ? "#0b1624"                    : "#ffffff";
+  const dropBorder = isDark ? "rgba(255,255,255,0.08)"     : "rgba(0,0,0,0.1)";
 
   const carregarSolicitacoes = async () => {
     if (!isSuperAdmin) return;
@@ -78,27 +90,28 @@ const Navbar = () => {
     <header
       className="sticky top-0 z-50"
       style={{
-        background: "rgba(8,17,30,0.88)",
+        background: navBg,
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        borderBottom: `1px solid ${navBorder}`,
+        transition: "background 0.3s, border-color 0.3s",
       }}
     >
-      <div className="container flex h-16 items-center justify-between px-6">
+      <div className="flex h-16 items-center justify-between px-6">
 
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+        {/* Logo — hidden on md+ because sidebar has it */}
+        <Link to="/" className="flex md:hidden items-center gap-2.5 shrink-0">
           <div
             className="flex h-9 w-9 items-center justify-center rounded-lg"
             style={{
-              background: "#fff",
+              background: isDark ? "#fff" : "#08111e",
               boxShadow: "0 0 0 1px rgba(184,134,11,0.35)",
             }}
           >
-            <BookOpen className="h-4.5 w-4.5" style={{ height: 18, width: 18, color: "#08111e" }} />
+            <BookOpen style={{ height: 18, width: 18, color: isDark ? "#08111e" : "#fff" }} />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-sm font-bold text-white tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <span className="text-sm font-bold tracking-wide" style={{ color: textActive, fontFamily: "'Playfair Display', serif" }}>
               TCC Digital
             </span>
             <span className="text-[8px] font-bold tracking-[0.28em] uppercase" style={{ color: "#b8860b" }}>
@@ -107,61 +120,89 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Nav desktop */}
-        <nav className="hidden md:flex items-center">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="relative px-4 py-2 text-[13px] transition-colors"
-              style={{
-                color: location.pathname === item.path ? "#fff" : "rgba(255,255,255,0.4)",
-                fontWeight: location.pathname === item.path ? 500 : 400,
-                letterSpacing: "0.02em",
-              }}
-            >
-              {item.label}
-              {location.pathname === item.path && (
-                <motion.div
-                  layoutId="nav-indicator"
-                  className="absolute bottom-0 left-4 right-4 h-[2px] rounded-none"
-                  style={{ background: "#b8860b" }}
-                />
-              )}
-            </Link>
-          ))}
+        {/* Título da página atual — desktop */}
+        <div className="hidden md:block">
+          <span className="text-sm font-semibold" style={{ color: textActive, fontFamily: "'Playfair Display', serif" }}>
+            {navItems.find(n => n.path === location.pathname)?.label ?? "TCC Digital"}
+          </span>
+        </div>
+
+        {/* Nav desktop — middle */}
+        <nav className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
+          {navItems.map((item) => {
+            const active = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="relative px-4 py-2 text-[13px] transition-colors"
+                style={{
+                  color: active ? textActive : textMuted,
+                  fontWeight: active ? 500 : 400,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {item.label}
+                {active && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute bottom-0 left-4 right-4 h-[2px] rounded-none"
+                    style={{ background: "#b8860b" }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Ações desktop */}
+        {/* Right actions — desktop */}
         <div className="hidden md:flex items-center gap-2">
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            title={isDark ? "Modo claro" : "Modo escuro"}
+            className="flex items-center justify-center rounded-lg transition-all"
+            style={{
+              width: 36, height: 36,
+              color: textMuted,
+              background: "transparent",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          >
+            {isDark ? <Sun style={{ height: 17, width: 17 }} /> : <Moon style={{ height: 17, width: 17 }} />}
+          </button>
+
           {isLoggedIn ? (
             <>
               <Link
                 to="/perfil"
                 className="flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg transition-all"
-                style={{ color: "rgba(255,255,255,0.65)" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                style={{ color: textMuted }}
+                onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
               >
                 <User className="h-4 w-4" style={{ color: "#b8860b" }} />
-                <span className="font-medium text-white text-[13px]">{user?.nome}</span>
+                <span className="font-medium text-[13px]" style={{ color: textActive }}>{user?.nome}</span>
                 <span className="text-[9px] font-semibold px-2 py-0.5 rounded-sm" style={badge.style}>
                   {badge.label}
                 </span>
               </Link>
 
+              {/* Bell */}
               {isSuperAdmin && (
                 <div className="relative" ref={sininhoRef}>
                   <button
                     onClick={() => setSininhoOpen(!sininhoOpen)}
-                    className="relative p-2 rounded-lg transition-colors"
-                    style={{ color: "rgba(255,255,255,0.4)" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "#fff"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+                    className="relative flex items-center justify-center rounded-lg transition-all"
+                    style={{ width: 36, height: 36, color: textMuted, background: "transparent" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"; e.currentTarget.style.color = textActive; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = textMuted; }}
                   >
                     <Bell className="h-5 w-5" />
                     {solicitacoes.length > 0 && (
-                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2" style={{ ringColor: "#08111e" }} />
+                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500" />
                     )}
                   </button>
                   <AnimatePresence>
@@ -172,28 +213,24 @@ const Navbar = () => {
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
                         className="absolute right-0 mt-2 w-80 rounded-xl overflow-hidden z-50"
-                        style={{
-                          background: "#0b1624",
-                          border: "1px solid rgba(255,255,255,0.08)",
-                          boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-                        }}
+                        style={{ background: dropBg, border: `1px solid ${dropBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}
                       >
-                        <div className="px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                          <p className="text-sm font-semibold text-white">Solicitações de Acesso</p>
-                          <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
+                        <div className="px-4 py-3" style={{ borderBottom: `1px solid ${dropBorder}` }}>
+                          <p className="text-sm font-semibold" style={{ color: textActive }}>Solicitações de Acesso</p>
+                          <p className="text-xs" style={{ color: textMuted }}>
                             {solicitacoes.length} pendente{solicitacoes.length !== 1 ? "s" : ""}
                           </p>
                         </div>
                         <div className="max-h-80 overflow-y-auto">
                           {solicitacoes.length === 0 ? (
-                            <p className="text-sm text-center py-6" style={{ color: "rgba(255,255,255,0.3)" }}>
+                            <p className="text-sm text-center py-6" style={{ color: textMuted }}>
                               Nenhuma solicitação pendente.
                             </p>
                           ) : solicitacoes.map((s) => (
-                            <div key={s._id} className="px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                              <p className="text-sm font-medium text-white">{s.nome}</p>
-                              <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{s.email}</p>
-                              <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>
+                            <div key={s._id} className="px-4 py-3" style={{ borderBottom: `1px solid ${dropBorder}` }}>
+                              <p className="text-sm font-medium" style={{ color: textActive }}>{s.nome}</p>
+                              <p className="text-xs" style={{ color: textMuted }}>{s.email}</p>
+                              <p className="text-xs mb-3" style={{ color: textMuted }}>
                                 {new Date(s.createdAt || s.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
                               </p>
                               <div className="flex gap-2">
@@ -225,21 +262,13 @@ const Navbar = () => {
 
               {isAdmin && (
                 <Link to="/admin">
-                  <Button
-                    variant="ghost" size="sm"
-                    className="text-xs transition-colors"
-                    style={{ color: "rgba(255,255,255,0.4)" }}
-                  >
+                  <Button variant="ghost" size="sm" className="text-xs transition-colors" style={{ color: textMuted }}>
                     <Settings className="h-4 w-4 mr-1" /> Admin
                   </Button>
                 </Link>
               )}
-              <Button
-                variant="ghost" size="sm"
-                className="text-xs transition-colors"
-                style={{ color: "rgba(255,255,255,0.4)" }}
-                onClick={handleLogout}
-              >
+
+              <Button variant="ghost" size="sm" className="text-xs" style={{ color: textMuted }} onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-1" /> Sair
               </Button>
             </>
@@ -251,20 +280,28 @@ const Navbar = () => {
                 onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
                 onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
               >
-                <LogIn className="h-4 w-4" /> Entrar
+                <LogIn className="h-4 w-4" /> Enviar TCC
               </button>
             </Link>
           )}
         </div>
 
-        {/* Mobile direita */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile right */}
+        <div className="flex md:hidden items-center gap-1">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg"
+            style={{ color: textMuted }}
+          >
+            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+
           {isSuperAdmin && (
             <div className="relative" ref={sininhoRef}>
               <button
                 onClick={() => setSininhoOpen(!sininhoOpen)}
                 className="relative p-2 rounded-lg"
-                style={{ color: "rgba(255,255,255,0.5)" }}
+                style={{ color: textMuted }}
               >
                 <Bell className="h-5 w-5" />
                 {solicitacoes.length > 0 && (
@@ -279,21 +316,21 @@ const Navbar = () => {
                     exit={{ opacity: 0, y: -8, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
                     className="absolute right-0 mt-2 w-72 rounded-xl overflow-hidden z-50"
-                    style={{ background: "#0b1624", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}
+                    style={{ background: dropBg, border: `1px solid ${dropBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.4)" }}
                   >
-                    <div className="px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                      <p className="text-sm font-semibold text-white">Solicitações</p>
-                      <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
+                    <div className="px-4 py-3" style={{ borderBottom: `1px solid ${dropBorder}` }}>
+                      <p className="text-sm font-semibold" style={{ color: textActive }}>Solicitações</p>
+                      <p className="text-xs" style={{ color: textMuted }}>
                         {solicitacoes.length} pendente{solicitacoes.length !== 1 ? "s" : ""}
                       </p>
                     </div>
                     <div className="max-h-64 overflow-y-auto">
                       {solicitacoes.length === 0 ? (
-                        <p className="text-sm text-center py-6" style={{ color: "rgba(255,255,255,0.3)" }}>Nenhuma pendente.</p>
+                        <p className="text-sm text-center py-6" style={{ color: textMuted }}>Nenhuma pendente.</p>
                       ) : solicitacoes.map((s) => (
-                        <div key={s._id} className="px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                          <p className="text-sm font-medium text-white">{s.nome}</p>
-                          <p className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>{s.email}</p>
+                        <div key={s._id} className="px-4 py-3" style={{ borderBottom: `1px solid ${dropBorder}` }}>
+                          <p className="text-sm font-medium" style={{ color: textActive }}>{s.nome}</p>
+                          <p className="text-xs mb-2" style={{ color: textMuted }}>{s.email}</p>
                           <div className="flex gap-2">
                             <button onClick={() => aprovar(s._id)} className="flex-1 py-1.5 rounded text-xs font-medium" style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>✓ Aprovar</button>
                             <button onClick={() => rejeitar(s._id)} className="flex-1 py-1.5 rounded text-xs font-medium" style={{ background: "rgba(239,68,68,0.1)", color: "#f87171" }}>✕ Rejeitar</button>
@@ -306,17 +343,18 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
           )}
+
           <button
             onClick={() => setOpen(!open)}
             className="p-2 rounded-lg transition-colors"
-            style={{ color: "rgba(255,255,255,0.6)" }}
+            style={{ color: textMuted }}
           >
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
-      {/* Menu mobile */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -325,7 +363,7 @@ const Navbar = () => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="md:hidden overflow-hidden"
-            style={{ background: "#0b1624", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+            style={{ background: mobileBg, borderTop: `1px solid ${navBorder}` }}
           >
             <nav className="flex flex-col px-4 py-3 gap-1">
               {navItems.map((item) => (
@@ -335,29 +373,27 @@ const Navbar = () => {
                   onClick={() => setOpen(false)}
                   className="flex items-center px-4 py-3.5 rounded-lg text-sm font-medium transition-all"
                   style={location.pathname === item.path
-                    ? { background: "rgba(184,134,11,0.1)", color: "#fff", borderLeft: "2px solid #b8860b" }
-                    : { color: "rgba(255,255,255,0.4)" }
+                    ? { background: "rgba(184,134,11,0.1)", color: textActive, borderLeft: "2px solid #b8860b" }
+                    : { color: textMuted }
                   }
                 >
                   {item.label}
                 </Link>
               ))}
 
-              <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: `1px solid ${navBorder}` }}>
                 {isLoggedIn ? (
                   <>
                     <Link
                       to="/perfil"
                       onClick={() => setOpen(false)}
                       className="flex items-center gap-2 px-2 py-1 rounded-lg transition-all"
-                      onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
-                      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                     >
                       <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: "rgba(184,134,11,0.12)" }}>
                         <User className="h-4 w-4" style={{ color: "#b8860b" }} />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-white leading-none">{user?.nome}</p>
+                        <p className="text-sm font-semibold leading-none" style={{ color: textActive }}>{user?.nome}</p>
                         <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-sm mt-0.5 inline-block" style={badge.style}>
                           {badge.label}
                         </span>
@@ -368,7 +404,7 @@ const Navbar = () => {
                         to="/admin"
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-                        style={{ color: "rgba(255,255,255,0.55)", border: "1px solid rgba(255,255,255,0.08)" }}
+                        style={{ color: textMuted, border: `1px solid ${navBorder}` }}
                       >
                         <Settings className="h-4 w-4" /> Painel Admin
                       </Link>

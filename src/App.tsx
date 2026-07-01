@@ -4,7 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/AuthContext";
+import { ThemeProvider } from "@/hooks/ThemeContext";
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import TCCList from "./pages/TCCList";
@@ -26,25 +28,34 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/"           element={<Index />} />
-                <Route path="/tccs"       element={<TCCList />} />
-                <Route path="/tcc/:id"    element={<TCCDetail />} />
-                <Route path="/categorias" element={<Categorias />} />
-                <Route path="/login"      element={<Login />} />
-                <Route path="/cadastro"   element={<Cadastro />} />
-                <Route path="/solicitar"  element={<Solicitar />} />
-                <Route path="/admin"      element={<Admin />} />
-                <Route path="/perfil"     element={<Perfil />} />
-                <Route path="/perfil/:id" element={<Perfil />} />
-                <Route path="*"           element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+          <ThemeProvider>
+            {/* Outer shell: sidebar + main column */}
+            <div className="flex min-h-screen">
+              {/* Sidebar — visible md+ */}
+              <Sidebar />
+
+              {/* Main column: navbar + content + footer */}
+              <div className="flex flex-col flex-1 min-w-0">
+                <Navbar />
+                <main className="flex-1">
+                  <Routes>
+                    <Route path="/"           element={<Index />} />
+                    <Route path="/tccs"       element={<TCCList />} />
+                    <Route path="/tcc/:id"    element={<TCCDetail />} />
+                    <Route path="/categorias" element={<Categorias />} />
+                    <Route path="/login"      element={<Login />} />
+                    <Route path="/cadastro"   element={<Cadastro />} />
+                    <Route path="/solicitar"  element={<Solicitar />} />
+                    <Route path="/admin"      element={<Admin />} />
+                    <Route path="/perfil"     element={<Perfil />} />
+                    <Route path="/perfil/:id" element={<Perfil />} />
+                    <Route path="*"           element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
+            </div>
+          </ThemeProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
