@@ -10,7 +10,7 @@ const Footer = () => (
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 border border-accent/20">
               <BookOpen className="h-4 w-4 text-accent" />
             </div>
-            <span className="font-bold text-foreground">TCC Digital - CEEP</span>
+            <span className="font-bold text-foreground">REPOSITÓRIO CEEP</span>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Plataforma digital para acesso e consulta de Trabalhos de Conclusão de Curso do CEEP.
