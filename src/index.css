@@ -180,3 +180,21 @@
     transform: translateX(100%);
   }
 }
+/* FORÇA sidebar oculta no mobile, sem depender do Tailwind */
+@media (max-width: 767px) {
+  aside {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  aside {
+    display: flex !important;
+  }
+}
+
+/* Trava geral contra overflow horizontal */
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
