@@ -21,12 +21,12 @@ const Sidebar = () => {
 
   const handleLogout = () => { logout(); navigate("/"); };
 
-  const bg       = isDark ? "#08111e"                    : "#f0f4f8";
-  const border   = isDark ? "rgba(255,255,255,0.06)"     : "rgba(0,0,0,0.08)";
-  const iconCol  = isDark ? "rgba(255,255,255,0.35)"     : "rgba(0,0,0,0.35)";
-  const iconAct  = "#b8860b";
-  const logoBg   = isDark ? "#ffffff"                    : "#08111e";
-  const logoIcon = isDark ? "#08111e"                    : "#ffffff";
+  const bg       = isDark ? "#0b1220"                    : "#ffffff";
+  const border   = isDark ? "rgba(255,255,255,0.08)"     : "rgba(15,23,42,0.08)";
+  const iconCol  = isDark ? "rgba(255,255,255,0.4)"      : "rgba(15,23,42,0.4)";
+  const iconAct  = "#1d4ed8";
+  const logoBg   = "#1d4ed8";
+  const logoIcon = "#ffffff";
 
   return (
     <aside
@@ -45,7 +45,7 @@ const Sidebar = () => {
       <Link to="/" className="flex items-center justify-center mb-4 mt-1">
         <div
           className="flex h-9 w-9 items-center justify-center rounded-xl"
-          style={{ background: logoBg, boxShadow: "0 0 0 1px rgba(184,134,11,0.3)" }}
+          style={{ background: logoBg, boxShadow: "0 0 0 1px rgba(29,78,216,0.3)" }}
         >
           <BookOpen style={{ height: 18, width: 18, color: logoIcon }} />
         </div>
@@ -65,11 +65,11 @@ const Sidebar = () => {
                 className="relative flex items-center justify-center rounded-xl w-full transition-all"
                 style={{
                   height: 44,
-                  background: active ? "rgba(184,134,11,0.12)" : "transparent",
+                  background: active ? "rgba(29,78,216,0.1)" : "transparent",
                   color: active ? iconAct : iconCol,
                 }}
                 onMouseEnter={e => {
-                  if (!active) e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)";
+                  if (!active) e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.05)";
                 }}
                 onMouseLeave={e => {
                   if (!active) e.currentTarget.style.background = "transparent";
@@ -79,7 +79,7 @@ const Sidebar = () => {
                   <motion.div
                     layoutId="sidebar-indicator"
                     className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full"
-                    style={{ background: "#b8860b" }}
+                    style={{ background: "#1d4ed8" }}
                   />
                 )}
                 <Icon style={{ height: 19, width: 19 }} />
@@ -96,7 +96,7 @@ const Sidebar = () => {
             title="Admin"
             className="flex items-center justify-center rounded-xl w-full transition-all"
             style={{ height: 44, color: iconCol }}
-            onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)")}
+            onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.05)")}
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
           >
             <Settings style={{ height: 19, width: 19 }} />
