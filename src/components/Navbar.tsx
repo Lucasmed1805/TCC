@@ -102,7 +102,7 @@ const Navbar = () => {
 {/* Logo Mobile */}
 <Link to="/" className="flex md:hidden items-center shrink-0">
   <img
-    src="/logo-ceep.png"
+    src="/logo.png"
     alt="Logo CEEP"
     className="h-11 w-11 object-contain"
   />
