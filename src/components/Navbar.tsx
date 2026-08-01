@@ -112,7 +112,7 @@ const Navbar = () => {
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-sm font-bold tracking-wide" style={{ color: textActive }}>
-              TCC Digital
+              Repositório
             </span>
             <span className="text-[8px] font-bold tracking-[0.28em] uppercase" style={{ color: "#ef4444" }}>
               CEEP
