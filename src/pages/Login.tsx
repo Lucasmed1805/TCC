@@ -18,15 +18,15 @@ const Login = () => {
   const navigate = useNavigate();
 
   // ── theme tokens ──
-  const pageBg = isDark ? "#060e1f" : "#f0f4f8";
+  const pageBg = isDark ? "#0b1220" : "#ffffff";
   const cardBg = isDark ? "rgba(17,31,56,0.5)" : "#ffffff";
-  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-  const textMain = isDark ? "#ffffff" : "#0d1b2a";
-  const textMuted = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.45)";
-  const inputBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
-  const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)";
-  const iconBadgeBg = isDark ? "rgba(184,134,11,0.1)" : "rgba(184,134,11,0.1)";
-  const iconBadgeBorder = isDark ? "rgba(184,134,11,0.2)" : "rgba(184,134,11,0.25)";
+  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
+  const textMain = isDark ? "#ffffff" : "#0f172a";
+  const textMuted = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.45)";
+  const inputBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
+  const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.12)";
+  const iconBadgeBg = isDark ? "rgba(29,78,216,0.1)" : "rgba(29,78,216,0.1)";
+  const iconBadgeBorder = isDark ? "rgba(29,78,216,0.2)" : "rgba(29,78,216,0.25)";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +54,9 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl mb-4"
             style={{ background: iconBadgeBg, border: `1px solid ${iconBadgeBorder}` }}>
-            <BookOpen className="h-7 w-7" style={{ color: "#b8860b" }} />
+            <BookOpen className="h-7 w-7" style={{ color: "#1d4ed8" }} />
           </div>
-          <h1 className="font-serif text-2xl font-bold" style={{ color: textMain }}>Entrar</h1>
+          <h1 className="text-2xl font-bold" style={{ color: textMain }}>Entrar</h1>
           <p className="text-sm mt-1" style={{ color: textMuted }}>Acesse sua conta no TCC Digital</p>
         </div>
 
@@ -107,13 +107,13 @@ const Login = () => {
         <div className="flex flex-col gap-1 mt-4 text-center text-sm" style={{ color: textMuted }}>
           <span>
             Não tem conta?{" "}
-            <Link to="/cadastro" className="font-medium hover:underline" style={{ color: "#b8860b" }}>
+            <Link to="/cadastro" className="font-medium hover:underline" style={{ color: "#1d4ed8" }}>
               Cadastre-se
             </Link>
           </span>
           <span>
             Quer acesso como administrador?{" "}
-            <Link to="/solicitar" className="font-medium hover:underline" style={{ color: "#b8860b" }}>
+            <Link to="/solicitar" className="font-medium hover:underline" style={{ color: "#1d4ed8" }}>
               Solicitar acesso
             </Link>
           </span>
