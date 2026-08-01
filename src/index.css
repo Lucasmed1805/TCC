@@ -1,94 +1,92 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── DARK MODE (default) ─────────────────────────────────────────── */
+/* ─── LIGHT MODE (default) ────────────────────────────────────────── */
 @layer base {
   :root,
-  [data-theme="dark"] {
-    --background: 214 47% 7%;
-    --foreground: 220 10% 92%;
-
-    --card: 215 40% 10%;
-    --card-foreground: 220 10% 92%;
-
-    --popover: 215 40% 10%;
-    --popover-foreground: 220 10% 92%;
-
-    --primary: 215 40% 13%;
-    --primary-foreground: 220 10% 92%;
-
-    --secondary: 215 35% 16%;
-    --secondary-foreground: 220 10% 75%;
-
-    --muted: 215 35% 14%;
-    --muted-foreground: 220 8% 50%;
-
-    --accent: 43 78% 38%;
-    --accent-foreground: 43 78% 90%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 215 30% 14%;
-    --input: 215 30% 16%;
-    --ring: 43 78% 38%;
-
-    --radius: 0.5rem;
-
-    --gold: #b8860b;
-    --gold-light: #d4a017;
-    --navy: #08111e;
-    --navy-mid: #0b1624;
-    --navy-deep: #070e19;
-
-    /* semantic shortcuts used in components */
-    --page-bg: #08111e;
-    --sidebar-bg: #08111e;
-    --navbar-bg: rgba(8, 17, 30, 0.88);
-    --text-base: rgba(255, 255, 255, 0.92);
-    --text-muted: rgba(255, 255, 255, 0.4);
-    --border-subtle: rgba(255, 255, 255, 0.06);
-  }
-
-  /* ─── LIGHT MODE ──────────────────────────────────────────────────── */
   [data-theme="light"] {
-    --background: 210 30% 96%;
-    --foreground: 215 40% 10%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 40% 10%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 40% 10%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 210 20% 94%;
-    --primary-foreground: 215 40% 10%;
+    --primary: 221 83% 40%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 15% 88%;
-    --secondary-foreground: 215 40% 20%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 210 15% 90%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 43 78% 38%;
-    --accent-foreground: 43 78% 10%;
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 85%;
-    --input: 210 20% 88%;
-    --ring: 43 78% 38%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 40%;
 
-    --page-bg: #f0f4f8;
-    --sidebar-bg: #f0f4f8;
-    --navbar-bg: rgba(240, 244, 248, 0.92);
-    --text-base: #0d1b2a;
-    --text-muted: rgba(0, 0, 0, 0.4);
-    --border-subtle: rgba(0, 0, 0, 0.08);
+    --radius: 0.75rem;
+
+    --blue: #1d4ed8;
+    --blue-light: #2563eb;
+    --red: #ef4444;
+
+    /* semantic shortcuts used in components */
+    --page-bg: #ffffff;
+    --sidebar-bg: #ffffff;
+    --navbar-bg: rgba(255, 255, 255, 0.92);
+    --text-base: #0f172a;
+    --text-muted: rgba(15, 23, 42, 0.55);
+    --border-subtle: rgba(15, 23, 42, 0.08);
+  }
+
+  /* ─── DARK MODE (alternativo, ativado manualmente) ─────────────────── */
+  [data-theme="dark"] {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 40% 11%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 35% 16%;
+    --secondary-foreground: 210 40% 90%;
+
+    --muted: 222 35% 14%;
+    --muted-foreground: 215 16% 60%;
+
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 221 83% 53%;
+
+    --page-bg: #0b1220;
+    --sidebar-bg: #0b1220;
+    --navbar-bg: rgba(11, 18, 32, 0.9);
+    --text-base: rgba(255, 255, 255, 0.92);
+    --text-muted: rgba(255, 255, 255, 0.45);
+    --border-subtle: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -105,27 +103,30 @@
   }
 
   h1, h2, h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
   }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--page-bg); }
-  ::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.25); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.45); }
+  ::-webkit-scrollbar-thumb { background: rgba(29,78,216,0.25); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(29,78,216,0.45); }
 }
 
 @layer utilities {
   .font-display {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
   }
 
-  .text-gold { color: #b8860b; }
+  .text-blue { color: #1d4ed8; }
+  .text-red  { color: #ef4444; }
 
-  .bg-navy      { background-color: #08111e; }
-  .bg-navy-mid  { background-color: #0b1624; }
-  .bg-navy-deep { background-color: #070e19; }
+  .bg-blue      { background-color: #1d4ed8; }
+  .bg-blue-light{ background-color: #2563eb; }
+  .bg-red       { background-color: #ef4444; }
 
-  .border-gold { border-color: rgba(184,134,11,0.3); }
+  .border-blue { border-color: rgba(29,78,216,0.3); }
 
   .carousel-scroll {
     scrollbar-width: none;
@@ -133,18 +134,18 @@
   }
   .carousel-scroll::-webkit-scrollbar { display: none; }
 
-  .gold-divider {
+  .blue-divider {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
   }
-  .gold-divider::before,
-  .gold-divider::after {
+  .blue-divider::before,
+  .blue-divider::after {
     content: '';
     width: 48px;
     height: 1px;
-    background: rgba(184,134,11,0.4);
+    background: rgba(29,78,216,0.3);
   }
 
   .animate-fade-up {
@@ -163,19 +164,19 @@
     50%       { opacity: 1; }
   }
 
-  .btn-gold-shine {
+  .btn-blue-shine {
     position: relative;
     overflow: hidden;
   }
-  .btn-gold-shine::after {
+  .btn-blue-shine::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
     transform: translateX(-100%);
     transition: transform 0.45s;
   }
-  .btn-gold-shine:hover::after {
+  .btn-blue-shine:hover::after {
     transform: translateX(100%);
   }
 }
