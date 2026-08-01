@@ -31,34 +31,34 @@ const ChatIA = ({ isDark }: { isDark: boolean }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // ── theme tokens ──
-  const panelBg = isDark ? "#0a1628" : "#ffffff";
-  const panelBorder = isDark ? "rgba(96,165,250,0.15)" : "rgba(37,99,235,0.15)";
-  const panelShadow = isDark ? "0 8px 40px rgba(0,0,0,0.4)" : "0 8px 30px rgba(0,0,0,0.08)";
-  const headerBg = isDark ? "linear-gradient(135deg,#0d1f3c,#0f2550)" : "linear-gradient(135deg,#eaf1fc,#dbe8fa)";
-  const headerBorder = isDark ? "rgba(96,165,250,0.1)" : "rgba(37,99,235,0.12)";
-  const textMain = isDark ? "#ffffff" : "#0d1b2a";
-  const textMuted = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.45)";
-  const textFainter = isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.35)";
-  const textFaintest = isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.3)";
-  const clearBtnBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
-  const suggestionBg = isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.025)";
-  const suggestionBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
-  const suggestionText = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.55)";
-  const suggestionHoverBg = isDark ? "rgba(37,99,235,0.1)" : "rgba(37,99,235,0.06)";
-  const suggestionHoverBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(37,99,235,0.2)";
-  const suggestionHoverText = isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.8)";
-  const bubbleIaBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)";
-  const bubbleIaBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)";
-  const bubbleIaText = isDark ? "rgba(255,255,255,0.82)" : "rgba(0,0,0,0.78)";
-  const recBg = isDark ? "rgba(37,99,235,0.08)" : "rgba(37,99,235,0.05)";
-  const recBorder = isDark ? "rgba(96,165,250,0.12)" : "rgba(37,99,235,0.15)";
-  const recHoverBg = isDark ? "rgba(37,99,235,0.18)" : "rgba(37,99,235,0.1)";
-  const recHoverBorder = isDark ? "rgba(96,165,250,0.25)" : "rgba(37,99,235,0.3)";
-  const inputAreaBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)";
-  const inputAreaBg = isDark ? "rgba(0,0,0,0.15)" : "rgba(0,0,0,0.02)";
-  const inputBoxBg = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)";
-  const inputBoxBorder = isDark ? "rgba(255,255,255,0.09)" : "rgba(0,0,0,0.1)";
-  const sendIdleBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)";
+  const panelBg = isDark ? "#0f1a30" : "#ffffff";
+  const panelBorder = isDark ? "rgba(96,165,250,0.15)" : "rgba(29,78,216,0.15)";
+  const panelShadow = isDark ? "0 8px 40px rgba(0,0,0,0.4)" : "0 8px 30px rgba(15,23,42,0.08)";
+  const headerBg = isDark ? "linear-gradient(135deg,#0f1a30,#132a52)" : "linear-gradient(135deg,#eaf1fc,#dbe8fa)";
+  const headerBorder = isDark ? "rgba(96,165,250,0.1)" : "rgba(29,78,216,0.12)";
+  const textMain = isDark ? "#ffffff" : "#0f172a";
+  const textMuted = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.45)";
+  const textFainter = isDark ? "rgba(255,255,255,0.25)" : "rgba(15,23,42,0.35)";
+  const textFaintest = isDark ? "rgba(255,255,255,0.18)" : "rgba(15,23,42,0.3)";
+  const clearBtnBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.05)";
+  const suggestionBg = isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.025)";
+  const suggestionBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)";
+  const suggestionText = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.55)";
+  const suggestionHoverBg = isDark ? "rgba(29,78,216,0.1)" : "rgba(29,78,216,0.06)";
+  const suggestionHoverBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(29,78,216,0.2)";
+  const suggestionHoverText = isDark ? "rgba(255,255,255,0.75)" : "rgba(15,23,42,0.8)";
+  const bubbleIaBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.03)";
+  const bubbleIaBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.07)";
+  const bubbleIaText = isDark ? "rgba(255,255,255,0.82)" : "rgba(15,23,42,0.78)";
+  const recBg = isDark ? "rgba(29,78,216,0.08)" : "rgba(29,78,216,0.05)";
+  const recBorder = isDark ? "rgba(96,165,250,0.12)" : "rgba(29,78,216,0.15)";
+  const recHoverBg = isDark ? "rgba(29,78,216,0.18)" : "rgba(29,78,216,0.1)";
+  const recHoverBorder = isDark ? "rgba(96,165,250,0.25)" : "rgba(29,78,216,0.3)";
+  const inputAreaBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.07)";
+  const inputAreaBg = isDark ? "rgba(0,0,0,0.15)" : "rgba(15,23,42,0.02)";
+  const inputBoxBg = isDark ? "rgba(255,255,255,0.05)" : "rgba(15,23,42,0.04)";
+  const inputBoxBorder = isDark ? "rgba(255,255,255,0.09)" : "rgba(15,23,42,0.1)";
+  const sendIdleBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.08)";
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -125,12 +125,12 @@ const ChatIA = ({ isDark }: { isDark: boolean }) => {
       >
         <div
           className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 relative"
-          style={{ background: "rgba(37,99,235,0.2)", border: "1px solid rgba(96,165,250,0.2)" }}
+          style={{ background: "rgba(29,78,216,0.2)", border: "1px solid rgba(96,165,250,0.2)" }}
         >
           <Sparkles style={{ height: 17, width: 17, color: "#60a5fa" }} />
           <span
             className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full flex items-center justify-center"
-            style={{ background: isDark ? "#060e1f" : "#ffffff" }}
+            style={{ background: isDark ? "#0b1220" : "#ffffff" }}
           >
             <span
               className="h-2 w-2 rounded-full"
@@ -216,7 +216,7 @@ const ChatIA = ({ isDark }: { isDark: boolean }) => {
                   initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="max-w-[85%] px-4 py-3 rounded-2xl rounded-tr-sm text-sm text-white"
-                  style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}
+                  style={{ background: "linear-gradient(135deg,#1d4ed8,#2563eb)" }}
                 >
                   {msg.texto}
                 </motion.div>
@@ -270,7 +270,7 @@ const ChatIA = ({ isDark }: { isDark: boolean }) => {
                       >
                         <div
                           className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ background: "rgba(37,99,235,0.2)" }}
+                          style={{ background: "rgba(29,78,216,0.2)" }}
                         >
                           <BookOpen style={{ height: 13, width: 13, color: "#60a5fa" }} />
                         </div>
@@ -358,7 +358,7 @@ const ChatIA = ({ isDark }: { isDark: boolean }) => {
             className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-all active:scale-95 disabled:opacity-30"
             style={{
               background: ideia.trim() && !carregando
-                ? "linear-gradient(135deg,#1a4fa0,#2563eb)"
+                ? "linear-gradient(135deg,#1d4ed8,#2563eb)"
                 : sendIdleBg,
             }}
           >
@@ -385,28 +385,28 @@ const TCCList = () => {
   const { isDark } = useTheme();
 
   // ── theme tokens ──
-  const pageBg = isDark ? "#060e1f" : "#f0f4f8";
+  const pageBg = isDark ? "#0b1220" : "#ffffff";
   const heroBg = isDark
-    ? "linear-gradient(160deg,#0a1628,#0d2550 60%,#060e1f)"
-    : "linear-gradient(160deg,#dce8f8,#c8dcf0 60%,#dce8f8)";
-  const textMain = isDark ? "#ffffff" : "#0d1b2a";
-  const textMuted = isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.5)";
-  const textFaint = isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.4)";
-  const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.35)";
-  const textFaintest = isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.3)";
-  const inputBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)";
-  const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)";
-  const filterIdleBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)";
-  const filterIdleColor = isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)";
-  const chipIdleBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
-  const chipIdleColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.55)";
-  const chipIdleBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.09)";
-  const dividerLine = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
-  const emptyIconBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
-  const emptyIconColor = isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.18)";
-  const emptyBtnBg = isDark ? "rgba(26,79,160,0.3)" : "rgba(26,79,160,0.1)";
-  const emptyBtnColor = isDark ? "#60a5fa" : "#1a4fa0";
-  const emptyBtnBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(26,79,160,0.25)";
+    ? "linear-gradient(160deg,#0f1a30,#132a52 60%,#0b1220)"
+    : "linear-gradient(160deg,#ffffff,#f4f8ff 60%,#ffffff)";
+  const textMain = isDark ? "#ffffff" : "#0f172a";
+  const textMuted = isDark ? "rgba(255,255,255,0.45)" : "rgba(15,23,42,0.5)";
+  const textFaint = isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.4)";
+  const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.35)";
+  const textFaintest = isDark ? "rgba(255,255,255,0.25)" : "rgba(15,23,42,0.3)";
+  const inputBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.05)";
+  const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.12)";
+  const filterIdleBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.05)";
+  const filterIdleColor = isDark ? "rgba(255,255,255,0.6)" : "rgba(15,23,42,0.6)";
+  const chipIdleBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
+  const chipIdleColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.55)";
+  const chipIdleBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.09)";
+  const dividerLine = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.08)";
+  const emptyIconBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.04)";
+  const emptyIconColor = isDark ? "rgba(255,255,255,0.15)" : "rgba(15,23,42,0.18)";
+  const emptyBtnBg = isDark ? "rgba(29,78,216,0.3)" : "rgba(29,78,216,0.1)";
+  const emptyBtnColor = isDark ? "#60a5fa" : "#1d4ed8";
+  const emptyBtnBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(29,78,216,0.25)";
 
   useEffect(() => {
     fetch(`${API}/api/tccs`)
@@ -439,7 +439,7 @@ const TCCList = () => {
       {/* Hero */}
       <div className="px-5 pt-8 pb-5" style={{ background: heroBg }}>
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
-          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#f5a623" }}>Acervo</p>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#1d4ed8" }}>Acervo</p>
           <h1 className="text-2xl font-extrabold mb-1" style={{ color: textMain }}>TCCs e Apostilas</h1>
           <p className="text-sm" style={{ color: textMuted }}>
             {loading ? "Carregando..." : `${tccs.length} trabalho${tccs.length !== 1 ? "s" : ""} disponíve${tccs.length !== 1 ? "is" : "l"}`}
@@ -471,7 +471,7 @@ const TCCList = () => {
             onClick={() => setFiltrosAbertos(!filtrosAbertos)}
             className="px-3.5 rounded-xl flex items-center gap-1.5 text-sm font-semibold transition-all"
             style={filtrosAbertos || temFiltros
-              ? { background: "#1a4fa0", color: "white", border: "1px solid #2563eb" }
+              ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
               : { background: filterIdleBg, color: filterIdleColor, border: `1px solid ${inputBorder}` }}>
             <SlidersHorizontal style={{ height: 15, width: 15 }} />
             {temFiltros ? "•" : ""}
@@ -493,7 +493,7 @@ const TCCList = () => {
                     <button key={c} onClick={() => setCursoFilter(cursoFilter === c ? "" : c)}
                       className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
                       style={cursoFilter === c
-                        ? { background: "#1a4fa0", color: "white", border: "1px solid #2563eb" }
+                        ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
                         : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
                       {c}
                     </button>
@@ -505,7 +505,7 @@ const TCCList = () => {
                       <button key={a} onClick={() => setAnoFilter(anoFilter === String(a) ? "" : String(a))}
                         className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
                         style={anoFilter === String(a)
-                          ? { background: "#f5a623", color: "#0a1628", border: "1px solid #f5a623" }
+                          ? { background: "#ef4444", color: "#ffffff", border: "1px solid #ef4444" }
                           : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
                         {a}
                       </button>
@@ -549,7 +549,7 @@ const TCCList = () => {
         {loading ? (
           <div className="flex flex-col items-center gap-3 py-24">
             <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin"
-              style={{ borderColor: "#1a4fa0", borderTopColor: "transparent" }} />
+              style={{ borderColor: "#1d4ed8", borderTopColor: "transparent" }} />
             <p className="text-sm" style={{ color: textMuted }}>Carregando trabalhos...</p>
           </div>
         ) : filtered.length === 0 ? (
