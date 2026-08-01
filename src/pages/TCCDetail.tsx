@@ -14,19 +14,19 @@ const TCCDetail = () => {
   const { isDark } = useTheme();
 
   // ── theme tokens ──
-  const pageBg = isDark ? "#060e1f" : "#f0f4f8";
-  const headerBg = isDark ? "rgba(6,14,31,0.92)" : "rgba(240,244,248,0.92)";
-  const headerBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)";
-  const textMain = isDark ? "#ffffff" : "#0d1b2a";
-  const textMuted = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
-  const textFaint = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)";
-  const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.35)";
+  const pageBg = isDark ? "#0b1220" : "#ffffff";
+  const headerBg = isDark ? "rgba(11,18,32,0.92)" : "rgba(255,255,255,0.92)";
+  const headerBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.08)";
+  const textMain = isDark ? "#ffffff" : "#0f172a";
+  const textMuted = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.5)";
+  const textFaint = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.4)";
+  const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.35)";
   const cardBg = isDark ? "#111f38" : "#ffffff";
-  const cardBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)";
-  const hoverIcon = isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)";
-  const hoverBg = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)";
-  const dividerBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-  const fileEmptyBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+  const cardBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.08)";
+  const hoverIcon = isDark ? "rgba(255,255,255,0.6)" : "rgba(15,23,42,0.6)";
+  const hoverBg = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.06)";
+  const dividerBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
+  const fileEmptyBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.1)";
 
   useEffect(() => {
     fetch(`${API}/api/tccs/${id}`)
@@ -50,7 +50,7 @@ const TCCDetail = () => {
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center transition-colors" style={{ background: pageBg }}>
       <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#1a4fa0", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#1d4ed8", borderTopColor: "transparent" }} />
         <p className="text-sm" style={{ color: textFaint }}>Carregando...</p>
       </div>
     </div>
@@ -62,7 +62,7 @@ const TCCDetail = () => {
       <p className="text-lg font-semibold" style={{ color: textMain }}>TCC não encontrado</p>
       <Link to="/tccs"
         className="px-6 py-3 rounded-xl text-sm font-semibold text-white"
-        style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)" }}>
+        style={{ background: "linear-gradient(135deg,#1d4ed8,#2563eb)" }}>
         Voltar ao acervo
       </Link>
     </div>
@@ -88,7 +88,7 @@ const TCCDetail = () => {
         {/* Badge do curso */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="pt-6">
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-            style={{ background: isDark ? "rgba(26,79,160,0.2)" : "rgba(26,79,160,0.1)", color: isDark ? "#60a5fa" : "#1a4fa0", border: `1px solid ${isDark ? "rgba(96,165,250,0.2)" : "rgba(26,79,160,0.2)"}` }}>
+            style={{ background: isDark ? "rgba(29,78,216,0.2)" : "rgba(29,78,216,0.1)", color: isDark ? "#60a5fa" : "#1d4ed8", border: `1px solid ${isDark ? "rgba(96,165,250,0.2)" : "rgba(29,78,216,0.2)"}` }}>
             <GraduationCap style={{ height: 12, width: 12 }} />
             {tcc.curso}
           </span>
@@ -127,7 +127,7 @@ const TCCDetail = () => {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
             className="mt-5">
             <h2 className="text-sm font-bold mb-2 flex items-center gap-2" style={{ color: textMain }}>
-              <span className="inline-block w-1 h-4 rounded-full" style={{ background: "#f5a623" }} />
+              <span className="inline-block w-1 h-4 rounded-full" style={{ background: "#ef4444" }} />
               Resumo
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: textMuted }}>{tcc.resumo}</p>
@@ -177,7 +177,7 @@ const TCCDetail = () => {
               onClick={handleDownload}
               disabled={downloading}
               className="w-full py-4 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-70"
-              style={{ background: "linear-gradient(135deg,#1a4fa0,#2563eb)", boxShadow: "0 4px 20px rgba(37,99,235,0.3)" }}>
+              style={{ background: "linear-gradient(135deg,#1d4ed8,#2563eb)", boxShadow: "0 4px 20px rgba(37,99,235,0.3)" }}>
               {downloading ? (
                 <>
                   <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
