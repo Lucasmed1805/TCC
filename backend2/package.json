@@ -1,7 +1,7 @@
 {
   "name": "tcc-digital-backend",
   "version": "1.0.0",
-  "description": "Backend da plataforma TCC Digital - CEEP",
+  "description": "Backend da plataforma Repositório - CEEP",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
