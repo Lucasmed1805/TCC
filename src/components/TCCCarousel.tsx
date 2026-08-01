@@ -39,7 +39,7 @@ const TCCCarousel = ({ title, subtitle, tccs }: TCCCarouselProps) => {
           >
             <span
               className="inline-block w-1 h-4 rounded-full shrink-0"
-              style={{ background: "#e85d04" }}
+              style={{ background: "#1d4ed8" }}
             />
             {title}
           </h2>

@@ -17,7 +17,7 @@ const navItems = [
 
 const roleBadge = (role?: string) => {
   if (role === "super_admin") return { label: "Super Admin", style: { background: "rgba(124,58,237,0.15)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" } };
-  if (role === "admin")       return { label: "Admin",       style: { background: "rgba(184,134,11,0.12)", color: "#b8860b", border: "1px solid rgba(184,134,11,0.3)" } };
+  if (role === "admin")       return { label: "Admin",       style: { background: "rgba(29,78,216,0.12)", color: "#1d4ed8", border: "1px solid rgba(29,78,216,0.3)" } };
   return                             { label: "Usuário",     style: { background: "rgba(128,128,128,0.12)", color: "rgba(128,128,128,0.7)", border: "1px solid rgba(128,128,128,0.2)" } };
 };
 
@@ -32,13 +32,13 @@ const Navbar = () => {
   const sininhoRef = useRef<HTMLDivElement>(null);
 
   // ── theme tokens ──────────────────────────────────────────────────────────
-  const navBg      = isDark ? "rgba(8,17,30,0.88)"        : "rgba(240,244,248,0.92)";
-  const navBorder  = isDark ? "rgba(255,255,255,0.06)"     : "rgba(0,0,0,0.08)";
-  const textMuted  = isDark ? "rgba(255,255,255,0.4)"      : "rgba(0,0,0,0.4)";
-  const textActive = isDark ? "#ffffff"                    : "#08111e";
-  const mobileBg   = isDark ? "#0b1624"                    : "#e8edf2";
-  const dropBg     = isDark ? "#0b1624"                    : "#ffffff";
-  const dropBorder = isDark ? "rgba(255,255,255,0.08)"     : "rgba(0,0,0,0.1)";
+  const navBg      = isDark ? "rgba(11,18,32,0.9)"         : "rgba(255,255,255,0.92)";
+  const navBorder  = isDark ? "rgba(255,255,255,0.08)"     : "rgba(15,23,42,0.08)";
+  const textMuted  = isDark ? "rgba(255,255,255,0.45)"     : "rgba(15,23,42,0.5)";
+  const textActive = isDark ? "#ffffff"                    : "#0f172a";
+  const mobileBg   = isDark ? "#0b1220"                    : "#f8fafc";
+  const dropBg     = isDark ? "#0b1220"                    : "#ffffff";
+  const dropBorder = isDark ? "rgba(255,255,255,0.1)"      : "rgba(15,23,42,0.1)";
 
   const carregarSolicitacoes = async () => {
     if (!isSuperAdmin) return;
@@ -104,17 +104,17 @@ const Navbar = () => {
           <div
             className="flex h-9 w-9 items-center justify-center rounded-lg"
             style={{
-              background: isDark ? "#fff" : "#08111e",
-              boxShadow: "0 0 0 1px rgba(184,134,11,0.35)",
+              background: isDark ? "#1d4ed8" : "#1d4ed8",
+              boxShadow: "0 0 0 1px rgba(29,78,216,0.35)",
             }}
           >
-            <BookOpen style={{ height: 18, width: 18, color: isDark ? "#08111e" : "#fff" }} />
+            <BookOpen style={{ height: 18, width: 18, color: "#fff" }} />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-sm font-bold tracking-wide" style={{ color: textActive, fontFamily: "'Playfair Display', serif" }}>
+            <span className="text-sm font-bold tracking-wide" style={{ color: textActive }}>
               TCC Digital
             </span>
-            <span className="text-[8px] font-bold tracking-[0.28em] uppercase" style={{ color: "#b8860b" }}>
+            <span className="text-[8px] font-bold tracking-[0.28em] uppercase" style={{ color: "#ef4444" }}>
               CEEP
             </span>
           </div>
@@ -122,7 +122,7 @@ const Navbar = () => {
 
         {/* Título da página atual — desktop */}
         <div className="hidden md:block">
-          <span className="text-sm font-semibold" style={{ color: textActive, fontFamily: "'Playfair Display', serif" }}>
+          <span className="text-sm font-semibold" style={{ color: textActive }}>
             {navItems.find(n => n.path === location.pathname)?.label ?? "TCC Digital"}
           </span>
         </div>
@@ -147,7 +147,7 @@ const Navbar = () => {
                   <motion.div
                     layoutId="nav-indicator"
                     className="absolute bottom-0 left-4 right-4 h-[2px] rounded-none"
-                    style={{ background: "#b8860b" }}
+                    style={{ background: "#1d4ed8" }}
                   />
                 )}
               </Link>
@@ -168,7 +168,7 @@ const Navbar = () => {
               color: textMuted,
               background: "transparent",
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)")}
+            onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.06)")}
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
           >
             {isDark ? <Sun style={{ height: 17, width: 17 }} /> : <Moon style={{ height: 17, width: 17 }} />}
@@ -180,10 +180,10 @@ const Navbar = () => {
                 to="/perfil"
                 className="flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg transition-all"
                 style={{ color: textMuted }}
-                onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)")}
+                onMouseEnter={e => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.05)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
               >
-                <User className="h-4 w-4" style={{ color: "#b8860b" }} />
+                <User className="h-4 w-4" style={{ color: "#1d4ed8" }} />
                 <span className="font-medium text-[13px]" style={{ color: textActive }}>{user?.nome}</span>
                 <span className="text-[9px] font-semibold px-2 py-0.5 rounded-sm" style={badge.style}>
                   {badge.label}
@@ -197,7 +197,7 @@ const Navbar = () => {
                     onClick={() => setSininhoOpen(!sininhoOpen)}
                     className="relative flex items-center justify-center rounded-lg transition-all"
                     style={{ width: 36, height: 36, color: textMuted, background: "transparent" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"; e.currentTarget.style.color = textActive; }}
+                    onMouseEnter={e => { e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.06)"; e.currentTarget.style.color = textActive; }}
                     onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = textMuted; }}
                   >
                     <Bell className="h-5 w-5" />
@@ -213,7 +213,7 @@ const Navbar = () => {
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
                         className="absolute right-0 mt-2 w-80 rounded-xl overflow-hidden z-50"
-                        style={{ background: dropBg, border: `1px solid ${dropBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}
+                        style={{ background: dropBg, border: `1px solid ${dropBorder}`, boxShadow: "0 20px 60px rgba(15,23,42,0.15)" }}
                       >
                         <div className="px-4 py-3" style={{ borderBottom: `1px solid ${dropBorder}` }}>
                           <p className="text-sm font-semibold" style={{ color: textActive }}>Solicitações de Acesso</p>
@@ -236,7 +236,7 @@ const Navbar = () => {
                               <div className="flex gap-2">
                                 <button onClick={() => aprovar(s._id)}
                                   className="flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors"
-                                  style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}
+                                  style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a" }}
                                   onMouseEnter={e => (e.currentTarget.style.background = "rgba(34,197,94,0.18)")}
                                   onMouseLeave={e => (e.currentTarget.style.background = "rgba(34,197,94,0.1)")}
                                 >
@@ -244,7 +244,7 @@ const Navbar = () => {
                                 </button>
                                 <button onClick={() => rejeitar(s._id)}
                                   className="flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors"
-                                  style={{ background: "rgba(239,68,68,0.1)", color: "#f87171" }}
+                                  style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444" }}
                                   onMouseEnter={e => (e.currentTarget.style.background = "rgba(239,68,68,0.18)")}
                                   onMouseLeave={e => (e.currentTarget.style.background = "rgba(239,68,68,0.1)")}
                                 >
@@ -275,8 +275,8 @@ const Navbar = () => {
           ) : (
             <Link to="/login">
               <button
-                className="flex items-center gap-1.5 text-white text-xs font-bold px-4 py-2 rounded transition-opacity btn-gold-shine"
-                style={{ background: "#b8860b", letterSpacing: "0.06em" }}
+                className="flex items-center gap-1.5 text-white text-xs font-bold px-4 py-2 rounded transition-opacity btn-blue-shine"
+                style={{ background: "#1d4ed8", letterSpacing: "0.06em" }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
                 onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
               >
@@ -316,7 +316,7 @@ const Navbar = () => {
                     exit={{ opacity: 0, y: -8, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
                     className="absolute right-0 mt-2 w-72 rounded-xl overflow-hidden z-50"
-                    style={{ background: dropBg, border: `1px solid ${dropBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.4)" }}
+                    style={{ background: dropBg, border: `1px solid ${dropBorder}`, boxShadow: "0 20px 60px rgba(15,23,42,0.2)" }}
                   >
                     <div className="px-4 py-3" style={{ borderBottom: `1px solid ${dropBorder}` }}>
                       <p className="text-sm font-semibold" style={{ color: textActive }}>Solicitações</p>
@@ -332,8 +332,8 @@ const Navbar = () => {
                           <p className="text-sm font-medium" style={{ color: textActive }}>{s.nome}</p>
                           <p className="text-xs mb-2" style={{ color: textMuted }}>{s.email}</p>
                           <div className="flex gap-2">
-                            <button onClick={() => aprovar(s._id)} className="flex-1 py-1.5 rounded text-xs font-medium" style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>✓ Aprovar</button>
-                            <button onClick={() => rejeitar(s._id)} className="flex-1 py-1.5 rounded text-xs font-medium" style={{ background: "rgba(239,68,68,0.1)", color: "#f87171" }}>✕ Rejeitar</button>
+                            <button onClick={() => aprovar(s._id)} className="flex-1 py-1.5 rounded text-xs font-medium" style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a" }}>✓ Aprovar</button>
+                            <button onClick={() => rejeitar(s._id)} className="flex-1 py-1.5 rounded text-xs font-medium" style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444" }}>✕ Rejeitar</button>
                           </div>
                         </div>
                       ))}
@@ -373,7 +373,7 @@ const Navbar = () => {
                   onClick={() => setOpen(false)}
                   className="flex items-center px-4 py-3.5 rounded-lg text-sm font-medium transition-all"
                   style={location.pathname === item.path
-                    ? { background: "rgba(184,134,11,0.1)", color: textActive, borderLeft: "2px solid #b8860b" }
+                    ? { background: "rgba(29,78,216,0.1)", color: textActive, borderLeft: "2px solid #1d4ed8" }
                     : { color: textMuted }
                   }
                 >
@@ -389,8 +389,8 @@ const Navbar = () => {
                       onClick={() => setOpen(false)}
                       className="flex items-center gap-2 px-2 py-1 rounded-lg transition-all"
                     >
-                      <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: "rgba(184,134,11,0.12)" }}>
-                        <User className="h-4 w-4" style={{ color: "#b8860b" }} />
+                      <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: "rgba(29,78,216,0.12)" }}>
+                        <User className="h-4 w-4" style={{ color: "#1d4ed8" }} />
                       </div>
                       <div>
                         <p className="text-sm font-semibold leading-none" style={{ color: textActive }}>{user?.nome}</p>
@@ -412,7 +412,7 @@ const Navbar = () => {
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-                      style={{ color: "#f87171", border: "1px solid rgba(239,68,68,0.2)" }}
+                      style={{ color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)" }}
                     >
                       <LogOut className="h-4 w-4" /> Sair
                     </button>
@@ -422,7 +422,7 @@ const Navbar = () => {
                     to="/login"
                     onClick={() => setOpen(false)}
                     className="flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-bold text-white"
-                    style={{ background: "#b8860b", letterSpacing: "0.06em" }}
+                    style={{ background: "#1d4ed8", letterSpacing: "0.06em" }}
                   >
                     <LogIn className="h-4 w-4" /> Entrar na conta
                   </Link>
