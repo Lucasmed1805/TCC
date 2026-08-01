@@ -23,7 +23,7 @@ const Sidebar = () => {
 
   const bg       = isDark ? "#0b1220"                    : "#ffffff";
   const border   = isDark ? "rgba(255,255,255,0.08)"     : "rgba(15,23,42,0.08)";
-  const iconCol  = isDark ? "rgba(255,255,255,0.4)"      : "rgba(15,23,42,0.4)";
+  const iconCol  = isDark ? "rgba(255,255,255,0.4)"      : "rgba(15,23,42,0.65)";
   const iconAct  = "#1d4ed8";
   const logoBg   = "#1d4ed8";
   const logoIcon = "#ffffff";

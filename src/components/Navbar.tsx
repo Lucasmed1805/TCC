@@ -34,7 +34,7 @@ const Navbar = () => {
   // ── theme tokens ──────────────────────────────────────────────────────────
   const navBg      = isDark ? "rgba(11,18,32,0.9)"         : "rgba(255,255,255,0.92)";
   const navBorder  = isDark ? "rgba(255,255,255,0.08)"     : "rgba(15,23,42,0.08)";
-  const textMuted  = isDark ? "rgba(255,255,255,0.45)"     : "rgba(15,23,42,0.5)";
+  const textMuted  = isDark ? "rgba(255,255,255,0.45)"     : "rgba(15,23,42,0.68)";
   const textActive = isDark ? "#ffffff"                    : "#0f172a";
   const mobileBg   = isDark ? "#0b1220"                    : "#f8fafc";
   const dropBg     = isDark ? "#0b1220"                    : "#ffffff";

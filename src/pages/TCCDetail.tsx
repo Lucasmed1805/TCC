@@ -18,8 +18,8 @@ const TCCDetail = () => {
   const headerBg = isDark ? "rgba(11,18,32,0.92)" : "rgba(255,255,255,0.92)";
   const headerBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.08)";
   const textMain = isDark ? "#ffffff" : "#0f172a";
-  const textMuted = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.5)";
-  const textFaint = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.4)";
+  const textMuted = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.68)";
+  const textFaint = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.58)";
   const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.35)";
   const cardBg = isDark ? "#111f38" : "#ffffff";
   const cardBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.08)";

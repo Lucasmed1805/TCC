@@ -390,8 +390,8 @@ const TCCList = () => {
     ? "linear-gradient(160deg,#0f1a30,#132a52 60%,#0b1220)"
     : "linear-gradient(160deg,#ffffff,#f4f8ff 60%,#ffffff)";
   const textMain = isDark ? "#ffffff" : "#0f172a";
-  const textMuted = isDark ? "rgba(255,255,255,0.45)" : "rgba(15,23,42,0.5)";
-  const textFaint = isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.4)";
+  const textMuted = isDark ? "rgba(255,255,255,0.45)" : "rgba(15,23,42,0.68)";
+  const textFaint = isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.58)";
   const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.35)";
   const textFaintest = isDark ? "rgba(255,255,255,0.25)" : "rgba(15,23,42,0.3)";
   const inputBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.05)";

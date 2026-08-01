@@ -15,8 +15,8 @@ const TCCCard = ({ tcc }: { tcc: TCC }) => {
   const cardBg     = isDark ? "#111f38" : "#ffffff";
   const cardBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.08)";
   const textMain   = isDark ? "#ffffff" : "#0f172a";
-  const textMuted  = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.45)";
-  const textFaint  = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.35)";
+  const textMuted  = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.65)";
+  const textFaint  = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.55)";
 
   return (
     <Link to={`/tcc/${tcc._id || tcc.id}`}

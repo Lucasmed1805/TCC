@@ -49,7 +49,7 @@ const Index = () => {
   const cardBg     = isDark ? "#111f38" : "#ffffff";
   const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
   const textMain   = isDark ? "#ffffff" : "#0f172a";
-  const textMuted  = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.5)";
+  const textMuted  = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.68)";
   const inputBg    = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
   const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.1)";
   const badgeBg    = isDark ? "rgba(29,78,216,0.15)" : "rgba(29,78,216,0.08)";
