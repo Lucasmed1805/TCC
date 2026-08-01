@@ -41,15 +41,14 @@ const Sidebar = () => {
         zIndex: 40,
       }}
     >
-      {/* Logo */}
-      <Link to="/" className="flex items-center justify-center mb-4 mt-1">
-        <div
-          className="flex h-9 w-9 items-center justify-center rounded-xl"
-          style={{ background: logoBg, boxShadow: "0 0 0 1px rgba(29,78,216,0.3)" }}
-        >
-          <BookOpen style={{ height: 18, width: 18, color: logoIcon }} />
-        </div>
-      </Link>
+{/* Logo */}
+<Link to="/" className="flex items-center justify-center mb-4 mt-1">
+  <img
+    src="/logo.png"
+    alt="Logo"
+    style={{ height: 36, width: 36, objectFit: "contain", borderRadius: 12 }}
+  />
+</Link>
 
       {/* Nav items */}
       <nav className="flex flex-col items-center gap-1 flex-1 w-full px-2">
