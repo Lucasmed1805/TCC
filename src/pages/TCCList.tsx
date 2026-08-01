@@ -37,19 +37,19 @@ const ChatIA = ({ isDark }: { isDark: boolean }) => {
   const headerBg = isDark ? "linear-gradient(135deg,#0f1a30,#132a52)" : "linear-gradient(135deg,#eaf1fc,#dbe8fa)";
   const headerBorder = isDark ? "rgba(96,165,250,0.1)" : "rgba(29,78,216,0.12)";
   const textMain = isDark ? "#ffffff" : "#0f172a";
-  const textMuted = isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.45)";
-  const textFainter = isDark ? "rgba(255,255,255,0.25)" : "rgba(15,23,42,0.35)";
-  const textFaintest = isDark ? "rgba(255,255,255,0.18)" : "rgba(15,23,42,0.3)";
+  const textMuted = isDark ? "rgba(255,255,255,0.55)" : "rgba(15,23,42,0.68)";
+  const textFainter = isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.5)";
+  const textFaintest = isDark ? "rgba(255,255,255,0.25)" : "rgba(15,23,42,0.4)";
   const clearBtnBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.05)";
   const suggestionBg = isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.025)";
   const suggestionBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)";
-  const suggestionText = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.55)";
+  const suggestionText = isDark ? "rgba(255,255,255,0.55)" : "rgba(15,23,42,0.6)";
   const suggestionHoverBg = isDark ? "rgba(29,78,216,0.1)" : "rgba(29,78,216,0.06)";
   const suggestionHoverBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(29,78,216,0.2)";
-  const suggestionHoverText = isDark ? "rgba(255,255,255,0.75)" : "rgba(15,23,42,0.8)";
+  const suggestionHoverText = isDark ? "rgba(255,255,255,0.8)" : "rgba(15,23,42,0.85)";
   const bubbleIaBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.03)";
   const bubbleIaBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.07)";
-  const bubbleIaText = isDark ? "rgba(255,255,255,0.82)" : "rgba(15,23,42,0.78)";
+  const bubbleIaText = isDark ? "rgba(255,255,255,0.85)" : "rgba(15,23,42,0.82)";
   const recBg = isDark ? "rgba(29,78,216,0.08)" : "rgba(29,78,216,0.05)";
   const recBorder = isDark ? "rgba(96,165,250,0.12)" : "rgba(29,78,216,0.15)";
   const recHoverBg = isDark ? "rgba(29,78,216,0.18)" : "rgba(29,78,216,0.1)";
@@ -378,10 +378,13 @@ const TCCList = () => {
   const [searchParams] = useSearchParams();
   const [tccs, setTccs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("busca") || "");
   const [cursoFilter, setCursoFilter] = useState(searchParams.get("curso") || "");
+  const [tipoFilter, setTipoFilter] = useState(searchParams.get("tipo") || "");
   const [anoFilter, setAnoFilter] = useState("");
-  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
+  const [filtrosAbertos, setFiltrosAbertos] = useState(
+    !!(searchParams.get("curso") || searchParams.get("tipo"))
+  );
   const { isDark } = useTheme();
 
   // ── theme tokens ──
@@ -390,20 +393,20 @@ const TCCList = () => {
     ? "linear-gradient(160deg,#0f1a30,#132a52 60%,#0b1220)"
     : "linear-gradient(160deg,#ffffff,#f4f8ff 60%,#ffffff)";
   const textMain = isDark ? "#ffffff" : "#0f172a";
-  const textMuted = isDark ? "rgba(255,255,255,0.45)" : "rgba(15,23,42,0.68)";
-  const textFaint = isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.58)";
-  const textFainter = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.35)";
-  const textFaintest = isDark ? "rgba(255,255,255,0.25)" : "rgba(15,23,42,0.3)";
+  const textMuted = isDark ? "rgba(255,255,255,0.55)" : "rgba(15,23,42,0.68)";
+  const textFaint = isDark ? "rgba(255,255,255,0.45)" : "rgba(15,23,42,0.58)";
+  const textFainter = isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.5)";
+  const textFaintest = isDark ? "rgba(255,255,255,0.3)" : "rgba(15,23,42,0.42)";
   const inputBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.05)";
   const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.12)";
   const filterIdleBg = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.05)";
-  const filterIdleColor = isDark ? "rgba(255,255,255,0.6)" : "rgba(15,23,42,0.6)";
+  const filterIdleColor = isDark ? "rgba(255,255,255,0.7)" : "rgba(15,23,42,0.65)";
   const chipIdleBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
-  const chipIdleColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(15,23,42,0.55)";
+  const chipIdleColor = isDark ? "rgba(255,255,255,0.6)" : "rgba(15,23,42,0.6)";
   const chipIdleBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.09)";
   const dividerLine = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.08)";
   const emptyIconBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.04)";
-  const emptyIconColor = isDark ? "rgba(255,255,255,0.15)" : "rgba(15,23,42,0.18)";
+  const emptyIconColor = isDark ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.22)";
   const emptyBtnBg = isDark ? "rgba(29,78,216,0.3)" : "rgba(29,78,216,0.1)";
   const emptyBtnColor = isDark ? "#60a5fa" : "#1d4ed8";
   const emptyBtnBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(29,78,216,0.25)";
@@ -421,14 +424,16 @@ const TCCList = () => {
     const q = search.toLowerCase();
     const matchSearch = !q || t.titulo?.toLowerCase().includes(q) || t.autor?.toLowerCase().includes(q);
     const matchCurso = !cursoFilter || t.curso === cursoFilter;
+    const matchTipo = !tipoFilter || t.tipo === tipoFilter;
     const matchAno = !anoFilter || t.ano === Number(anoFilter);
-    return matchSearch && matchCurso && matchAno;
+    return matchSearch && matchCurso && matchTipo && matchAno;
   });
 
-  const temFiltros = cursoFilter || anoFilter;
+  const temFiltros = cursoFilter || tipoFilter || anoFilter;
 
   const limparFiltros = () => {
     setCursoFilter("");
+    setTipoFilter("");
     setAnoFilter("");
     setSearch("");
   };
@@ -488,32 +493,55 @@ const TCCList = () => {
               transition={{ duration: 0.2 }}
               className="overflow-hidden">
               <div className="mt-3 flex flex-col gap-2">
-                <div className="flex gap-2 flex-wrap">
-                  {cursos.map((c) => (
-                    <button key={c} onClick={() => setCursoFilter(cursoFilter === c ? "" : c)}
-                      className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
-                      style={cursoFilter === c
-                        ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
-                        : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
-                      {c}
-                    </button>
-                  ))}
-                </div>
-                {anos.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: textFainter }}>Curso</p>
                   <div className="flex gap-2 flex-wrap">
-                    {anos.map((a) => (
-                      <button key={a} onClick={() => setAnoFilter(anoFilter === String(a) ? "" : String(a))}
+                    {cursos.map((c) => (
+                      <button key={c} onClick={() => setCursoFilter(cursoFilter === c ? "" : c)}
                         className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
-                        style={anoFilter === String(a)
-                          ? { background: "#ef4444", color: "#ffffff", border: "1px solid #ef4444" }
+                        style={cursoFilter === c
+                          ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
                           : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
-                        {a}
+                        {c}
                       </button>
                     ))}
                   </div>
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 mt-2" style={{ color: textFainter }}>Tipo</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {[{ v: "tcc", label: "TCC" }, { v: "apostila", label: "Apostila" }].map(({ v, label }) => (
+                      <button key={v} onClick={() => setTipoFilter(tipoFilter === v ? "" : v)}
+                        className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
+                        style={tipoFilter === v
+                          ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
+                          : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {anos.length > 0 && (
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 mt-2" style={{ color: textFainter }}>Ano</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {anos.map((a) => (
+                        <button key={a} onClick={() => setAnoFilter(anoFilter === String(a) ? "" : String(a))}
+                          className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
+                          style={anoFilter === String(a)
+                            ? { background: "#ef4444", color: "#ffffff", border: "1px solid #ef4444" }
+                            : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
+                          {a}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 )}
+
                 {temFiltros && (
-                  <button onClick={limparFiltros} className="self-start text-xs text-red-400 flex items-center gap-1 mt-1">
+                  <button onClick={limparFiltros} className="self-start text-xs text-red-400 flex items-center gap-1 mt-2">
                     <X style={{ height: 11, width: 11 }} /> Limpar filtros
                   </button>
                 )}
