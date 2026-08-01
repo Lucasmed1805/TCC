@@ -99,26 +99,14 @@ const Navbar = () => {
     >
       <div className="flex h-16 items-center justify-between px-6">
 
-        {/* Logo — hidden on md+ because sidebar has it */}
-        <Link to="/" className="flex md:hidden items-center gap-2.5 shrink-0">
-          <div
-            className="flex h-9 w-9 items-center justify-center rounded-lg"
-            style={{
-              background: isDark ? "#1d4ed8" : "#1d4ed8",
-              boxShadow: "0 0 0 1px rgba(29,78,216,0.35)",
-            }}
-          >
-            <BookOpen style={{ height: 18, width: 18, color: "#fff" }} />
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-sm font-bold tracking-wide" style={{ color: textActive }}>
-              Repositório
-            </span>
-            <span className="text-[8px] font-bold tracking-[0.28em] uppercase" style={{ color: "#ef4444" }}>
-              CEEP
-            </span>
-          </div>
-        </Link>
+{/* Logo Mobile */}
+<Link to="/" className="flex md:hidden items-center shrink-0">
+  <img
+    src="/logo-ceep.png"
+    alt="Logo CEEP"
+    className="h-11 w-11 object-contain"
+  />
+</Link>
 
         {/* Título da página atual — desktop */}
         <div className="hidden md:block">
