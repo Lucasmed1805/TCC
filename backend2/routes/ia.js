@@ -48,7 +48,7 @@ Responda em português, de forma clara, amigável e útil. Se for uma recomenda�
     // (ex: gemini-2.0-flash, gemini-2.5-flash). O Google descontinua modelos
     // com frequência; esse alias sempre aponta para o Flash estável mais atual,
     // evitando que a IA pare de funcionar quando uma versão é aposentada.
-    const response = await fetch(
+    const response = await fetchComRetry(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
@@ -71,6 +71,7 @@ Responda em português, de forma clara, amigável e útil. Se for uma recomenda�
       if (response.status === 403) return res.status(500).json({ error: "Chave da IA inválida ou sem permissão." });
       if (response.status === 404) return res.status(500).json({ error: "Modelo de IA indisponível. Contate o administrador." });
       if (response.status === 429) return res.status(500).json({ error: "Limite de uso da IA atingido. Tente novamente em instantes." });
+      if (response.status === 503) return res.status(503).json({ error: "A IA está sobrecarregada no momento. Tente novamente em alguns instantes." });
 
       return res.status(500).json({ error: "Erro ao consultar a IA." });
     }
@@ -95,5 +96,27 @@ Responda em português, de forma clara, amigável e útil. Se for uma recomenda�
     res.status(500).json({ error: "Erro interno ao processar sua pergunta." });
   }
 });
+
+// Faz até 2 tentativas extras (3 no total) quando o Gemini responde 503
+// (sobrecarga temporária do modelo). Espera um pouco entre tentativas.
+async function fetchComRetry(url, options, tentativas = 3, esperaMs = 1200) {
+  let ultimaResposta;
+
+  for (let i = 0; i < tentativas; i++) {
+    const resposta = await fetch(url, options);
+
+    if (resposta.status !== 503) {
+      return resposta;
+    }
+
+    ultimaResposta = resposta;
+
+    if (i < tentativas - 1) {
+      await new Promise((r) => setTimeout(r, esperaMs));
+    }
+  }
+
+  return ultimaResposta;
+}
 
 module.exports = router;
