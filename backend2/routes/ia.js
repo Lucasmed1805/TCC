@@ -44,12 +44,12 @@ Pergunta/mensagem do usuário:
 
 Responda em português, de forma clara, amigável e útil. Se for uma recomendação de TCC, informe o número entre colchetes [N] de cada recomendado. Se for uma pergunta geral, apenas responda diretamente sem mencionar o acervo.`;
 
-    // Usamos o alias "gemini-flash-latest" em vez de um nome de versão fixo
-    // (ex: gemini-2.0-flash, gemini-2.5-flash). O Google descontinua modelos
-    // com frequência; esse alias sempre aponta para o Flash estável mais atual,
-    // evitando que a IA pare de funcionar quando uma versão é aposentada.
+    // Usamos "gemini-flash-lite-latest" (versão mais leve do Flash).
+    // Costuma ter menos fila/sobrecarga que o "gemini-flash-latest" padrão,
+    // além de ser mais rápido e mais barato — bom encaixe para esse caso de uso
+    // (recomendação curta de TCCs), que não exige o modelo mais robusto.
     const response = await fetchComRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
