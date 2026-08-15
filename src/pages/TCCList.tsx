@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Search, SlidersHorizontal, X, BookOpen, Sparkles, Send, Loader2, ChevronRight, MessageSquare } from "lucide-react";
+import { Search, SlidersHorizontal, X, BookOpen, Sparkles, Send, Loader2, ChevronRight, MessageSquare, GraduationCap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import TCCCard from "@/components/TCCCard";
 import { useTheme } from "@/hooks/ThemeContext";
@@ -383,7 +383,7 @@ const TCCList = () => {
   const [tipoFilter, setTipoFilter] = useState(searchParams.get("tipo") || "");
   const [anoFilter, setAnoFilter] = useState("");
   const [filtrosAbertos, setFiltrosAbertos] = useState(
-    !!(searchParams.get("curso") || searchParams.get("tipo"))
+    !!(searchParams.get("tipo"))
   );
   const [aba, setAba] = useState<"acervo" | "ia">("acervo");
   const { isDark } = useTheme();
@@ -410,6 +410,10 @@ const TCCList = () => {
   const emptyBtnBg = isDark ? "rgba(29,78,216,0.3)" : "rgba(29,78,216,0.1)";
   const emptyBtnColor = isDark ? "#60a5fa" : "#1d4ed8";
   const emptyBtnBorder = isDark ? "rgba(96,165,250,0.2)" : "rgba(29,78,216,0.25)";
+  const sidebarBg = isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.02)";
+  const sidebarBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.08)";
+  const sidebarItemHoverBg = isDark ? "rgba(255,255,255,0.05)" : "rgba(15,23,42,0.04)";
+  const sectionLine = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.09)";
 
   useEffect(() => {
     fetch(`${API}/api/tccs`)
@@ -420,6 +424,12 @@ const TCCList = () => {
 
   const anos = [...new Set(tccs.map((t) => t.ano))].sort((a, b) => b - a);
 
+  // Quantidade de TCCs por curso, para mostrar contador no menu lateral
+  const contagemPorCurso = cursos.reduce((acc, c) => {
+    acc[c] = tccs.filter((t) => t.curso === c).length;
+    return acc;
+  }, {} as Record<string, number>);
+
   const filtered = tccs.filter((t) => {
     const q = search.toLowerCase();
     const matchSearch = !q || t.titulo?.toLowerCase().includes(q) || t.autor?.toLowerCase().includes(q);
@@ -428,6 +438,13 @@ const TCCList = () => {
     const matchAno = !anoFilter || t.ano === Number(anoFilter);
     return matchSearch && matchCurso && matchTipo && matchAno;
   });
+
+  // Agrupa os resultados filtrados por ano (mais recente primeiro)
+  const anosDoFiltro = [...new Set(filtered.map((t) => t.ano))].sort((a, b) => b - a);
+  const gruposPorAno = anosDoFiltro.map((ano) => ({
+    ano,
+    itens: filtered.filter((t) => t.ano === ano),
+  }));
 
   const temFiltros = cursoFilter || tipoFilter || anoFilter;
 
@@ -504,16 +521,16 @@ const TCCList = () => {
             <button
               onClick={() => setFiltrosAbertos(!filtrosAbertos)}
               className="px-3.5 rounded-xl flex items-center gap-1.5 text-sm font-semibold transition-all"
-              style={filtrosAbertos || temFiltros
+              style={filtrosAbertos || tipoFilter || anoFilter
                 ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
                 : { background: filterIdleBg, color: filterIdleColor, border: `1px solid ${inputBorder}` }}>
               <SlidersHorizontal style={{ height: 15, width: 15 }} />
-              {temFiltros ? "•" : ""}
+              {tipoFilter || anoFilter ? "•" : ""}
             </button>
           </motion.div>
         )}
 
-        {/* Filtros expandíveis — só aparece na aba Acervo */}
+        {/* Filtros expandíveis (Tipo e Ano) — só aparece na aba Acervo */}
         <AnimatePresence>
           {aba === "acervo" && filtrosAbertos && (
             <motion.div
@@ -524,22 +541,7 @@ const TCCList = () => {
               className="overflow-hidden">
               <div className="mt-3 flex flex-col gap-2">
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: textFainter }}>Curso</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {cursos.map((c) => (
-                      <button key={c} onClick={() => setCursoFilter(cursoFilter === c ? "" : c)}
-                        className="text-xs font-semibold px-3 py-2 rounded-xl transition-all"
-                        style={cursoFilter === c
-                          ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
-                          : { background: chipIdleBg, color: chipIdleColor, border: `1px solid ${chipIdleBorder}` }}>
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 mt-2" style={{ color: textFainter }}>Tipo</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: textFainter }}>Tipo</p>
                   <div className="flex gap-2 flex-wrap">
                     {[{ v: "tcc", label: "TCC" }, { v: "apostila", label: "Apostila" }].map(({ v, label }) => (
                       <button key={v} onClick={() => setTipoFilter(tipoFilter === v ? "" : v)}
@@ -582,7 +584,7 @@ const TCCList = () => {
       </div>
 
       {/* Conteúdo */}
-      <div className="px-5 pb-10 max-w-5xl mx-auto">
+      <div className="px-5 pb-10 max-w-6xl mx-auto">
 
         {/* ── Aba: Assistente IA ── */}
         {aba === "ia" && (
@@ -598,48 +600,128 @@ const TCCList = () => {
 
         {/* ── Aba: Acervo ── */}
         {aba === "acervo" && (
-          <div className="mt-6">
-            {loading ? (
-              <div className="flex flex-col items-center gap-3 py-24">
-                <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin"
-                  style={{ borderColor: "#1d4ed8", borderTopColor: "transparent" }} />
-                <p className="text-sm" style={{ color: textMuted }}>Carregando trabalhos...</p>
-              </div>
-            ) : filtered.length === 0 ? (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="flex flex-col items-center gap-3 py-16 text-center">
-                <div className="h-16 w-16 rounded-2xl flex items-center justify-center mb-2"
-                  style={{ background: emptyIconBg }}>
-                  <BookOpen style={{ height: 28, width: 28, color: emptyIconColor }} />
+          <div className="mt-6 flex flex-col md:flex-row gap-5">
+
+            {/* Menu lateral por curso */}
+            <div
+              className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible md:w-56 md:shrink-0 pb-1 md:pb-0"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <button
+                onClick={() => setCursoFilter("")}
+                className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all shrink-0 md:shrink"
+                style={cursoFilter === ""
+                  ? { background: "#1d4ed8", color: "white" }
+                  : { background: sidebarBg, color: chipIdleColor, border: `1px solid ${sidebarBorder}` }}
+              >
+                <BookOpen style={{ height: 15, width: 15, flexShrink: 0 }} />
+                <span className="whitespace-nowrap">Todos os cursos</span>
+                <span
+                  className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                  style={{
+                    background: cursoFilter === "" ? "rgba(255,255,255,0.2)" : "rgba(29,78,216,0.12)",
+                    color: cursoFilter === "" ? "white" : "#1d4ed8",
+                  }}
+                >
+                  {tccs.length}
+                </span>
+              </button>
+
+              {cursos.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCursoFilter(cursoFilter === c ? "" : c)}
+                  className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all shrink-0 md:shrink"
+                  style={cursoFilter === c
+                    ? { background: "#1d4ed8", color: "white" }
+                    : { background: sidebarBg, color: chipIdleColor, border: `1px solid ${sidebarBorder}` }}
+                  onMouseEnter={(e) => {
+                    if (cursoFilter !== c) e.currentTarget.style.background = sidebarItemHoverBg;
+                  }}
+                  onMouseLeave={(e) => {
+                    if (cursoFilter !== c) e.currentTarget.style.background = sidebarBg;
+                  }}
+                >
+                  <GraduationCap style={{ height: 15, width: 15, flexShrink: 0 }} />
+                  <span className="whitespace-nowrap">{c}</span>
+                  <span
+                    className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{
+                      background: cursoFilter === c ? "rgba(255,255,255,0.2)" : "rgba(29,78,216,0.12)",
+                      color: cursoFilter === c ? "white" : "#1d4ed8",
+                    }}
+                  >
+                    {contagemPorCurso[c] || 0}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Lista de TCCs, agrupada por ano */}
+            <div className="flex-1 min-w-0">
+              {loading ? (
+                <div className="flex flex-col items-center gap-3 py-24">
+                  <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin"
+                    style={{ borderColor: "#1d4ed8", borderTopColor: "transparent" }} />
+                  <p className="text-sm" style={{ color: textMuted }}>Carregando trabalhos...</p>
                 </div>
-                <p className="text-base font-semibold" style={{ color: textMain }}>Nenhum trabalho encontrado</p>
-                <p className="text-sm" style={{ color: textMuted }}>Tente ajustar os filtros de busca</p>
-                {temFiltros && (
-                  <button onClick={limparFiltros}
-                    className="mt-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
-                    style={{ background: emptyBtnBg, color: emptyBtnColor, border: `1px solid ${emptyBtnBorder}` }}>
-                    Limpar filtros
-                  </button>
-                )}
-              </motion.div>
-            ) : (
-              <>
-                <p className="text-xs mb-4" style={{ color: textFaintest }}>
-                  {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
-                  {temFiltros ? " com filtros aplicados" : ""}
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {filtered.map((tcc, i) => (
-                    <motion.div key={tcc._id || tcc.id}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.04 }}>
-                      <TCCCard tcc={tcc} />
-                    </motion.div>
-                  ))}
-                </div>
-              </>
-            )}
+              ) : filtered.length === 0 ? (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  className="flex flex-col items-center gap-3 py-16 text-center">
+                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center mb-2"
+                    style={{ background: emptyIconBg }}>
+                    <BookOpen style={{ height: 28, width: 28, color: emptyIconColor }} />
+                  </div>
+                  <p className="text-base font-semibold" style={{ color: textMain }}>Nenhum trabalho encontrado</p>
+                  <p className="text-sm" style={{ color: textMuted }}>Tente ajustar os filtros de busca</p>
+                  {temFiltros && (
+                    <button onClick={limparFiltros}
+                      className="mt-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
+                      style={{ background: emptyBtnBg, color: emptyBtnColor, border: `1px solid ${emptyBtnBorder}` }}>
+                      Limpar filtros
+                    </button>
+                  )}
+                </motion.div>
+              ) : (
+                <>
+                  <p className="text-xs mb-5" style={{ color: textFaintest }}>
+                    {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
+                    {temFiltros ? " com filtros aplicados" : ""}
+                  </p>
+
+                  <div className="space-y-8">
+                    {gruposPorAno.map((grupo) => (
+                      <div key={grupo.ano}>
+                        {/* Cabeçalho da seção do ano */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <h2 className="text-lg font-extrabold shrink-0" style={{ color: textMain }}>
+                            {grupo.ano}
+                          </h2>
+                          <span
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0"
+                            style={{ background: "rgba(29,78,216,0.12)", color: "#1d4ed8" }}
+                          >
+                            {grupo.itens.length}
+                          </span>
+                          <div className="flex-1 h-px" style={{ background: sectionLine }} />
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                          {grupo.itens.map((tcc, i) => (
+                            <motion.div key={tcc._id || tcc.id}
+                              initial={{ opacity: 0, y: 15 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: i * 0.04 }}>
+                              <TCCCard tcc={tcc} />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>
