@@ -385,6 +385,7 @@ const TCCList = () => {
   const [filtrosAbertos, setFiltrosAbertos] = useState(
     !!(searchParams.get("curso") || searchParams.get("tipo"))
   );
+  const [aba, setAba] = useState<"acervo" | "ia">("acervo");
   const { isDark } = useTheme();
 
   // ── theme tokens ──
@@ -404,7 +405,6 @@ const TCCList = () => {
   const chipIdleBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
   const chipIdleColor = isDark ? "rgba(255,255,255,0.6)" : "rgba(15,23,42,0.6)";
   const chipIdleBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.09)";
-  const dividerLine = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.08)";
   const emptyIconBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.04)";
   const emptyIconColor = isDark ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.22)";
   const emptyBtnBg = isDark ? "rgba(29,78,216,0.3)" : "rgba(29,78,216,0.1)";
@@ -451,41 +451,71 @@ const TCCList = () => {
           </p>
         </motion.div>
 
-        {/* Barra de busca */}
+        {/* Seletor de abas: Acervo x Assistente IA */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-          className="mt-4 flex gap-2">
-          <div className="flex-1 flex items-center gap-2.5 rounded-xl px-4 py-3"
-            style={{ background: inputBg, border: `1px solid ${inputBorder}` }}>
-            <Search style={{ height: 15, width: 15, color: textFaint, flexShrink: 0 }} />
-            <input
-              type="text"
-              placeholder="Buscar por título ou autor..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-transparent text-sm outline-none w-full"
-              style={{ color: textMain }}
-            />
-            {search && (
-              <button onClick={() => setSearch("")} style={{ color: textFaint }}>
-                <X style={{ height: 14, width: 14 }} />
-              </button>
-            )}
-          </div>
+          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+          className="mt-5 flex gap-1 p-1 rounded-xl"
+          style={{ background: chipIdleBg, border: `1px solid ${chipIdleBorder}` }}
+        >
           <button
-            onClick={() => setFiltrosAbertos(!filtrosAbertos)}
-            className="px-3.5 rounded-xl flex items-center gap-1.5 text-sm font-semibold transition-all"
-            style={filtrosAbertos || temFiltros
-              ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
-              : { background: filterIdleBg, color: filterIdleColor, border: `1px solid ${inputBorder}` }}>
-            <SlidersHorizontal style={{ height: 15, width: 15 }} />
-            {temFiltros ? "•" : ""}
+            onClick={() => setAba("acervo")}
+            className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-lg transition-all"
+            style={aba === "acervo"
+              ? { background: "#1d4ed8", color: "white" }
+              : { background: "transparent", color: chipIdleColor }}
+          >
+            <BookOpen style={{ height: 15, width: 15 }} />
+            Acervo
+          </button>
+          <button
+            onClick={() => setAba("ia")}
+            className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-lg transition-all"
+            style={aba === "ia"
+              ? { background: "#1d4ed8", color: "white" }
+              : { background: "transparent", color: chipIdleColor }}
+          >
+            <Sparkles style={{ height: 15, width: 15 }} />
+            Assistente IA
           </button>
         </motion.div>
 
-        {/* Filtros expandíveis */}
+        {/* Barra de busca — só aparece na aba Acervo */}
+        {aba === "acervo" && (
+          <motion.div
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
+            className="mt-4 flex gap-2">
+            <div className="flex-1 flex items-center gap-2.5 rounded-xl px-4 py-3"
+              style={{ background: inputBg, border: `1px solid ${inputBorder}` }}>
+              <Search style={{ height: 15, width: 15, color: textFaint, flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Buscar por título ou autor..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-transparent text-sm outline-none w-full"
+                style={{ color: textMain }}
+              />
+              {search && (
+                <button onClick={() => setSearch("")} style={{ color: textFaint }}>
+                  <X style={{ height: 14, width: 14 }} />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setFiltrosAbertos(!filtrosAbertos)}
+              className="px-3.5 rounded-xl flex items-center gap-1.5 text-sm font-semibold transition-all"
+              style={filtrosAbertos || temFiltros
+                ? { background: "#1d4ed8", color: "white", border: "1px solid #2563eb" }
+                : { background: filterIdleBg, color: filterIdleColor, border: `1px solid ${inputBorder}` }}>
+              <SlidersHorizontal style={{ height: 15, width: 15 }} />
+              {temFiltros ? "•" : ""}
+            </button>
+          </motion.div>
+        )}
+
+        {/* Filtros expandíveis — só aparece na aba Acervo */}
         <AnimatePresence>
-          {filtrosAbertos && (
+          {aba === "acervo" && filtrosAbertos && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
@@ -554,66 +584,63 @@ const TCCList = () => {
       {/* Conteúdo */}
       <div className="px-5 pb-10 max-w-5xl mx-auto">
 
-        {/* ── Chat IA ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mt-6 mb-8"
-        >
-          <ChatIA isDark={isDark} />
-        </motion.div>
-
-        {/* ── Divisor ── */}
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex-1 h-px" style={{ background: dividerLine }} />
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: textFainter }}>
-            Acervo completo
-          </p>
-          <div className="flex-1 h-px" style={{ background: dividerLine }} />
-        </div>
-
-        {/* ── Lista de TCCs ── */}
-        {loading ? (
-          <div className="flex flex-col items-center gap-3 py-24">
-            <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin"
-              style={{ borderColor: "#1d4ed8", borderTopColor: "transparent" }} />
-            <p className="text-sm" style={{ color: textMuted }}>Carregando trabalhos...</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="flex flex-col items-center gap-3 py-16 text-center">
-            <div className="h-16 w-16 rounded-2xl flex items-center justify-center mb-2"
-              style={{ background: emptyIconBg }}>
-              <BookOpen style={{ height: 28, width: 28, color: emptyIconColor }} />
-            </div>
-            <p className="text-base font-semibold" style={{ color: textMain }}>Nenhum trabalho encontrado</p>
-            <p className="text-sm" style={{ color: textMuted }}>Tente ajustar os filtros de busca</p>
-            {temFiltros && (
-              <button onClick={limparFiltros}
-                className="mt-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
-                style={{ background: emptyBtnBg, color: emptyBtnColor, border: `1px solid ${emptyBtnBorder}` }}>
-                Limpar filtros
-              </button>
-            )}
+        {/* ── Aba: Assistente IA ── */}
+        {aba === "ia" && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mt-6"
+          >
+            <ChatIA isDark={isDark} />
           </motion.div>
-        ) : (
-          <>
-            <p className="text-xs mb-4" style={{ color: textFaintest }}>
-              {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
-              {temFiltros ? " com filtros aplicados" : ""}
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {filtered.map((tcc, i) => (
-                <motion.div key={tcc._id || tcc.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}>
-                  <TCCCard tcc={tcc} />
-                </motion.div>
-              ))}
-            </div>
-          </>
+        )}
+
+        {/* ── Aba: Acervo ── */}
+        {aba === "acervo" && (
+          <div className="mt-6">
+            {loading ? (
+              <div className="flex flex-col items-center gap-3 py-24">
+                <div className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin"
+                  style={{ borderColor: "#1d4ed8", borderTopColor: "transparent" }} />
+                <p className="text-sm" style={{ color: textMuted }}>Carregando trabalhos...</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="flex flex-col items-center gap-3 py-16 text-center">
+                <div className="h-16 w-16 rounded-2xl flex items-center justify-center mb-2"
+                  style={{ background: emptyIconBg }}>
+                  <BookOpen style={{ height: 28, width: 28, color: emptyIconColor }} />
+                </div>
+                <p className="text-base font-semibold" style={{ color: textMain }}>Nenhum trabalho encontrado</p>
+                <p className="text-sm" style={{ color: textMuted }}>Tente ajustar os filtros de busca</p>
+                {temFiltros && (
+                  <button onClick={limparFiltros}
+                    className="mt-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
+                    style={{ background: emptyBtnBg, color: emptyBtnColor, border: `1px solid ${emptyBtnBorder}` }}>
+                    Limpar filtros
+                  </button>
+                )}
+              </motion.div>
+            ) : (
+              <>
+                <p className="text-xs mb-4" style={{ color: textFaintest }}>
+                  {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
+                  {temFiltros ? " com filtros aplicados" : ""}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {filtered.map((tcc, i) => (
+                    <motion.div key={tcc._id || tcc.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}>
+                      <TCCCard tcc={tcc} />
+                    </motion.div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         )}
       </div>
 
