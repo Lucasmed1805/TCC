@@ -45,7 +45,7 @@ Pergunta/mensagem do usuário:
 Responda em português, de forma clara, amigável e útil. Se for uma recomendação de TCC, informe o número entre colchetes [N] de cada recomendado. Se for uma pergunta geral, apenas responda diretamente sem mencionar o acervo.`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,6 +65,7 @@ Responda em português, de forma clara, amigável e útil. Se for uma recomenda�
       // Mensagens de erro mais específicas
       if (response.status === 400) return res.status(500).json({ error: "Requisição inválida para a IA." });
       if (response.status === 403) return res.status(500).json({ error: "Chave da IA inválida ou sem permissão." });
+      if (response.status === 404) return res.status(500).json({ error: "Modelo de IA indisponível. Contate o administrador." });
       if (response.status === 429) return res.status(500).json({ error: "Limite de uso da IA atingido. Tente novamente em instantes." });
 
       return res.status(500).json({ error: "Erro ao consultar a IA." });
