@@ -58,7 +58,7 @@ const Login = () => {
           <div className="bg-white rounded-2xl px-6 py-4 inline-block"
             style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
             <img
-              src="/ceep-logo.png"
+              src="/ceep-logo.jpg"
               alt="CEEP Profª Lourdinha Guerra RN"
               className="h-16 w-auto object-contain"
             />
@@ -114,7 +114,7 @@ const Login = () => {
           {/* Logo mobile */}
           <div className="flex lg:hidden flex-col items-center gap-4 mb-8">
             <div className="bg-white rounded-2xl px-5 py-3">
-              <img src="/ceep-logo.png" alt="CEEP" className="h-12 w-auto object-contain" />
+              <img src="/ceep-logo.jpg" alt="CEEP" className="h-12 w-auto object-contain" />
             </div>
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-xl flex items-center justify-center"
