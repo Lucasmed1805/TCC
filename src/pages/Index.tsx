@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   Search, BookOpen, Download, Eye, ArrowRight, Sparkles,
   Monitor, Network, FileText, GraduationCap,
-  UploadCloud, ClipboardCheck, ShieldCheck, Globe,
+  UploadCloud, ShieldCheck, Globe,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/AuthContext";
@@ -16,17 +16,17 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:8080";
 export const cursos = ["Informática", "Redes de Computadores"];
 
 const categoryTiles = [
-  { label: "Informática",           icon: Monitor,        color: "#1d4ed8", filterKey: "curso", filterVal: "Informática" },
-  { label: "Redes de Computadores", icon: Network,        color: "#ef4444", filterKey: "curso", filterVal: "Redes de Computadores" },
-  { label: "TCCs",                  icon: GraduationCap,  color: "#1d4ed8", filterKey: "tipo",  filterVal: "tcc" },
-  { label: "Apostilas",             icon: FileText,       color: "#ef4444", filterKey: "tipo",  filterVal: "apostila" },
+  { label: "Informática",           icon: Monitor,       color: "#1d4ed8", filterKey: "curso", filterVal: "Informática" },
+  { label: "Redes de Computadores", icon: Network,       color: "#ef4444", filterKey: "curso", filterVal: "Redes de Computadores" },
+  { label: "TCCs",                  icon: GraduationCap, color: "#1d4ed8", filterKey: "tipo",  filterVal: "tcc" },
+  { label: "Apostilas",             icon: FileText,      color: "#ef4444", filterKey: "tipo",  filterVal: "apostila" },
 ];
 
 const steps = [
   { n: 1, title: "Envie seu trabalho", desc: "Envie seu TCC ou apostila para nossa biblioteca.", Icon: UploadCloud, color: "#1d4ed8" },
-  { n: 2, title: "Análise e revisão",  desc: "Nossa equipe realiza a análise do material.",       Icon: Search,      color: "#ef4444" },
-  { n: 3, title: "Aprovação",          desc: "Após aprovado, o trabalho é publicado.",             Icon: ShieldCheck, color: "#10b981" },
-  { n: 4, title: "Disponível",         desc: "Seu trabalho fica disponível para todos.",           Icon: Globe,       color: "#8b5cf6" },
+  { n: 2, title: "Análise e revisão",  desc: "Nossa equipe realiza a análise do material.",      Icon: Search,      color: "#ef4444" },
+  { n: 3, title: "Aprovação",          desc: "Após aprovado, o trabalho é publicado.",            Icon: ShieldCheck, color: "#10b981" },
+  { n: 4, title: "Disponível",         desc: "Seu trabalho fica disponível para todos.",          Icon: Globe,       color: "#8b5cf6" },
 ];
 
 const Index = () => {
@@ -39,13 +39,15 @@ const Index = () => {
   const { isDark } = useTheme();
 
   useEffect(() => {
-    fetch(`${API}/tccs`)
+    fetch(`${API}/api/tccs`)
       .then((res) => res.json())
       .then((data) => { setTccs(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
-  const recentTccs = [...tccs].sort((a, b) => b.criado_em.localeCompare(a.criado_em));
+  const recentTccs = [...tccs].sort((a, b) =>
+    (b.criado_em || "").localeCompare(a.criado_em || "")
+  );
   const destaques = recentTccs.slice(0, 4);
 
   const stats = [
@@ -55,22 +57,21 @@ const Index = () => {
     { label: "Cursos",          value: cursos.length, Icon: GraduationCap, color: "#8b5cf6" },
   ];
 
-  // ── theme tokens ──
   const pageBg      = isDark ? "#0b1220" : "#ffffff";
-  const heroBg       = isDark
+  const heroBg      = isDark
     ? "linear-gradient(160deg,#0b1220 0%,#0f1a30 40%,#132a52 75%,#0b1220 100%)"
     : "linear-gradient(160deg,#ffffff 0%,#f4f8ff 40%,#eef4ff 75%,#ffffff 100%)";
-  const cardBg        = isDark ? "#111f38" : "#ffffff";
-  const cardBorder    = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
-  const textMain      = isDark ? "#ffffff" : "#0f172a";
-  const textMuted     = isDark ? "rgba(255,255,255,0.55)" : "rgba(15,23,42,0.68)";
-  const inputBg       = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
-  const inputBorder   = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.1)";
-  const badgeBg       = isDark ? "rgba(29,78,216,0.15)" : "rgba(29,78,216,0.08)";
-  const sectionBg     = isDark ? "#0f1a30" : "#f8fafc";
+  const cardBg      = isDark ? "#111f38" : "#ffffff";
+  const cardBorder  = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
+  const textMain    = isDark ? "#ffffff" : "#0f172a";
+  const textMuted   = isDark ? "rgba(255,255,255,0.55)" : "rgba(15,23,42,0.68)";
+  const inputBg     = isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)";
+  const inputBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.1)";
+  const badgeBg     = isDark ? "rgba(29,78,216,0.15)" : "rgba(29,78,216,0.08)";
+  const sectionBg   = isDark ? "#0f1a30" : "#f8fafc";
   const sectionBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
-  const dotGrid       = isDark ? "rgba(255,255,255,0.035)" : "rgba(15,23,42,0.035)";
-  const dividerLine   = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
+  const dotGrid     = isDark ? "rgba(255,255,255,0.035)" : "rgba(15,23,42,0.035)";
+  const dividerLine = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
 
   const irParaFiltro = (key: string, val: string) => `/tccs?${key}=${encodeURIComponent(val)}`;
 
@@ -122,14 +123,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── Card "Encontre o que você precisa" (sobrepõe o hero) ── */}
+      {/* ── Card de busca ── */}
       <div className="container mx-auto px-5 -mt-8 relative z-20">
         <div className="rounded-2xl p-5 md:p-6" style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: "0 20px 50px rgba(15,23,42,0.12)" }}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-bold" style={{ color: textMain }}>Encontre o que você precisa</h2>
-              <p className="text-xs mt-0.5" style={{ color: textMuted }}>Pesquise entre trabalhos, apostilas e conteúdos.</p>
-            </div>
+          <div className="mb-4">
+            <h2 className="text-base font-bold" style={{ color: textMain }}>Encontre o que você precisa</h2>
+            <p className="text-xs mt-0.5" style={{ color: textMuted }}>Pesquise entre trabalhos, apostilas e conteúdos.</p>
           </div>
 
           <div className="flex flex-col md:flex-row gap-2.5">
@@ -156,9 +155,7 @@ const Index = () => {
               <option value="apostila">Apostila</option>
             </select>
 
-            <Link
-              to={`/tccs?${searchQuery ? `busca=${encodeURIComponent(searchQuery)}&` : ""}${cursoFiltro ? `curso=${encodeURIComponent(cursoFiltro)}&` : ""}${tipoFiltro ? `tipo=${tipoFiltro}` : ""}`}
-              className="md:w-auto">
+            <Link to={`/tccs?${searchQuery ? `busca=${encodeURIComponent(searchQuery)}&` : ""}${cursoFiltro ? `curso=${encodeURIComponent(cursoFiltro)}&` : ""}${tipoFiltro ? `tipo=${tipoFiltro}` : ""}`}>
               <button className="w-full md:w-auto text-white text-sm font-bold px-6 py-3 rounded-xl transition-all active:scale-95 whitespace-nowrap"
                 style={{ background: "linear-gradient(135deg,#1d4ed8,#2563eb)" }}>
                 Pesquisar
@@ -186,14 +183,12 @@ const Index = () => {
         </div>
       </div>
 
-      {/* ── Explore por categorias ── */}
+      {/* ── Categorias ── */}
       <section className="py-10" style={{ background: sectionBg, borderTop: `1px solid ${sectionBorder}`, borderBottom: `1px solid ${sectionBorder}` }}>
         <div className="container mx-auto px-5">
-          <div className="flex items-end justify-between mb-5">
-            <div>
-              <h2 className="text-lg font-bold" style={{ color: textMain }}>Explore por categorias</h2>
-              <p className="text-xs mt-0.5" style={{ color: textMuted }}>Navegue pelos principais temas de estudo.</p>
-            </div>
+          <div className="mb-5">
+            <h2 className="text-lg font-bold" style={{ color: textMain }}>Explore por categorias</h2>
+            <p className="text-xs mt-0.5" style={{ color: textMuted }}>Navegue pelos principais temas de estudo.</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {categoryTiles.map(({ label, icon: Icon, color, filterKey, filterVal }) => {
@@ -209,7 +204,9 @@ const Index = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-sm" style={{ color: textMain }}>{label}</p>
-                    <p className="text-xs mt-1" style={{ color: textMuted }}>{count} conteúdo{count !== 1 ? "s" : ""}</p>
+                    <p className="text-xs mt-1" style={{ color: textMuted }}>
+                      {loading ? "..." : `${count} conteúdo${count !== 1 ? "s" : ""}`}
+                    </p>
                   </div>
                 </Link>
               );
@@ -233,12 +230,12 @@ const Index = () => {
           <p className="text-sm" style={{ color: textMuted }}>Nenhum TCC cadastrado ainda.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {destaques.map((tcc) => <TCCCard key={tcc.id} tcc={tcc} />)}
+            {destaques.map((tcc) => <TCCCard key={tcc._id || tcc.id} tcc={tcc} />)}
           </div>
         )}
       </section>
 
-      {/* ── Carousels por curso ── */}
+      {/* ── Carousels ── */}
       <section className="container mx-auto px-5 pb-10 space-y-10">
         <TCCCarousel title="Mais Recentes" subtitle="Últimos trabalhos cadastrados" tccs={recentTccs} />
         {cursos.map((curso) => {
@@ -255,12 +252,12 @@ const Index = () => {
             <h2 className="text-lg font-bold mb-1" style={{ color: textMain }}>Como funciona?</h2>
             <p className="text-sm" style={{ color: textMuted }}>Um processo simples para compartilhar e acessar conhecimento.</p>
           </div>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-3 max-w-4xl mx-auto relative">
             {steps.map(({ n, title, desc, Icon, color }, i) => (
               <div key={n} className="flex flex-col items-center text-center gap-3 relative">
                 {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-6 left-[60%] w-full h-px" style={{ background: dividerLine, borderTop: `1px dashed ${dividerLine}` }} />
+                  <div className="hidden md:block absolute top-6 left-[60%] w-full h-px"
+                    style={{ background: dividerLine, borderTop: `1px dashed ${dividerLine}` }} />
                 )}
                 <div className="h-12 w-12 rounded-full flex items-center justify-center font-bold text-sm relative z-10"
                   style={{ background: `${color}18`, color, border: `1px solid ${color}33` }}>
