@@ -54,20 +54,22 @@ const Login = () => {
         {/* Conteúdo central */}
         <div className="relative z-10 space-y-6">
 
-          {/* Logo da instituição */}
-          <div className="bg-white rounded-3xl p-5 w-fit"
-            style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
-            <img
-              src="/logo.png"
-              alt="CEEP Profª Lourdinha Guerra RN"
-              className="h-32 w-auto object-contain"
-            />
-          </div>
+          {/* Selo à esquerda + logo da instituição à direita */}
+          <div className="flex items-end justify-between gap-4">
+            <div className="flex w-fit items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+              style={{ background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.3)", color: "#f5a623" }}>
+              <GraduationCap style={{ height: 12, width: 12 }} />
+              Biblioteca Digital CEEP
+            </div>
 
-          <div className="flex w-fit items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
-            style={{ background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.3)", color: "#f5a623" }}>
-            <GraduationCap style={{ height: 12, width: 12 }} />
-            Biblioteca Digital CEEP
+            <div className="bg-white rounded-3xl p-4 shrink-0 mr-10"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
+              <img
+                src="/logo.png"
+                alt="CEEP Profª Lourdinha Guerra RN"
+                className="h-36 w-auto object-contain"
+              />
+            </div>
           </div>
 
           <h1 className="text-4xl font-extrabold text-white leading-tight">
