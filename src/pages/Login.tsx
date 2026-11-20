@@ -54,13 +54,20 @@ const Login = () => {
         {/* Conteúdo central */}
         <div className="relative z-10 space-y-6">
 
-          {/* Selo à esquerda + logo da instituição à direita */}
-          <div className="flex items-end justify-between gap-4">
-            <div className="flex w-fit items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
-              style={{ background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.3)", color: "#f5a623" }}>
-              <GraduationCap style={{ height: 12, width: 12 }} />
-              Biblioteca Digital CEEP
-            </div>
+          {/* Selo */}
+          <div className="flex w-fit items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+            style={{ background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.3)", color: "#f5a623" }}>
+            <GraduationCap style={{ height: 12, width: 12 }} />
+            Biblioteca Digital CEEP
+          </div>
+
+          {/* Título à esquerda + logo da instituição à direita */}
+          <div className="flex flex-wrap items-center justify-between gap-6">
+            <h1 className="text-4xl font-extrabold text-white leading-tight">
+              Seu Repositório<br />
+              <span style={{ color: "#3b82f6" }}>Digital de TCCs</span><br />
+              <span style={{ color: "#f5a623" }}>e Apostilas</span>
+            </h1>
 
             <div className="bg-white rounded-3xl p-4 shrink-0 mr-10"
               style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
@@ -71,12 +78,6 @@ const Login = () => {
               />
             </div>
           </div>
-
-          <h1 className="text-4xl font-extrabold text-white leading-tight">
-            Seu Repositório<br />
-            <span style={{ color: "#3b82f6" }}>Digital de TCCs</span><br />
-            <span style={{ color: "#f5a623" }}>e Apostilas</span>
-          </h1>
 
           <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
             Acesse, guarde e compartilhe trabalhos acadêmicos de forma rápida e organizada.
