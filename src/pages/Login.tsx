@@ -90,7 +90,7 @@ const Login = () => {
         {/* Rodapé esquerdo */}
         <div className="relative z-10">
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>
-            © 2025 TCC Digital · CEEP
+            © 2026 TCC Digital · CEEP
           </p>
         </div>
       </div>
