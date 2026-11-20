@@ -1,9 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/hooks/AuthContext";
+import { AuthProvider, useAuth } from "@/hooks/AuthContext";
 import { ThemeProvider } from "@/hooks/ThemeContext";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
@@ -21,6 +21,61 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Rotas públicas (sem login)
+const PUBLIC_ROUTES = ["/login", "/cadastro", "/solicitar"];
+
+const AppRoutes = () => {
+  const { isLoggedIn } = useAuth();
+  const location = useLocation();
+
+  const isPublic = PUBLIC_ROUTES.includes(location.pathname);
+
+  // Se não está logado e não é rota pública → redireciona para login
+  if (!isLoggedIn && !isPublic) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Se está logado e tenta acessar login/cadastro → redireciona para home
+  if (isLoggedIn && isPublic) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Rotas públicas (login, cadastro, solicitar) — sem navbar/sidebar/footer
+  if (isPublic) {
+    return (
+      <Routes>
+        <Route path="/login"     element={<Login />} />
+        <Route path="/cadastro"  element={<Cadastro />} />
+        <Route path="/solicitar" element={<Solicitar />} />
+        <Route path="*"          element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
+
+  // Rotas protegidas — com navbar/sidebar/footer
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-1 min-w-0">
+        <Navbar />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/"           element={<Index />} />
+            <Route path="/tccs"       element={<TCCList />} />
+            <Route path="/tcc/:id"    element={<TCCDetail />} />
+            <Route path="/categorias" element={<Categorias />} />
+            <Route path="/admin"      element={<Admin />} />
+            <Route path="/perfil"     element={<Perfil />} />
+            <Route path="/perfil/:id" element={<Perfil />} />
+            <Route path="*"           element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </div>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -29,28 +84,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <div className="flex min-h-screen">
-              <Sidebar />
-              <div className="flex flex-col flex-1 min-w-0">
-                <Navbar />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/"           element={<Index />} />
-                    <Route path="/tccs"       element={<TCCList />} />
-                    <Route path="/tcc/:id"    element={<TCCDetail />} />
-                    <Route path="/categorias" element={<Categorias />} />
-                    <Route path="/login"      element={<Login />} />
-                    <Route path="/cadastro"   element={<Cadastro />} />
-                    <Route path="/solicitar"  element={<Solicitar />} />
-                    <Route path="/admin"      element={<Admin />} />
-                    <Route path="/perfil"     element={<Perfil />} />
-                    <Route path="/perfil/:id" element={<Perfil />} />
-                    <Route path="*"           element={<NotFound />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
-            </div>
+            <AppRoutes />
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
