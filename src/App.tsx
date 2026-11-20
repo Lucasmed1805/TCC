@@ -17,11 +17,11 @@ import Cadastro from "./pages/Cadastro";
 import Solicitar from "./pages/Solicitar";
 import Admin from "./pages/Admin";
 import Perfil from "./pages/Perfil";
+import Sobre from "./pages/Sobre";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Rotas públicas (sem login)
 const PUBLIC_ROUTES = ["/login", "/cadastro", "/solicitar"];
 
 const AppRoutes = () => {
@@ -30,17 +30,14 @@ const AppRoutes = () => {
 
   const isPublic = PUBLIC_ROUTES.includes(location.pathname);
 
-  // Se não está logado e não é rota pública → redireciona para login
   if (!isLoggedIn && !isPublic) {
     return <Navigate to="/login" replace />;
   }
 
-  // Se está logado e tenta acessar login/cadastro → redireciona para home
   if (isLoggedIn && isPublic) {
     return <Navigate to="/" replace />;
   }
 
-  // Rotas públicas (login, cadastro, solicitar) — sem navbar/sidebar/footer
   if (isPublic) {
     return (
       <Routes>
@@ -52,7 +49,6 @@ const AppRoutes = () => {
     );
   }
 
-  // Rotas protegidas — com navbar/sidebar/footer
   return (
     <div className="flex min-h-screen">
       <Sidebar />
@@ -64,6 +60,7 @@ const AppRoutes = () => {
             <Route path="/tccs"       element={<TCCList />} />
             <Route path="/tcc/:id"    element={<TCCDetail />} />
             <Route path="/categorias" element={<Categorias />} />
+            <Route path="/sobre"      element={<Sobre />} />
             <Route path="/admin"      element={<Admin />} />
             <Route path="/perfil"     element={<Perfil />} />
             <Route path="/perfil/:id" element={<Perfil />} />
