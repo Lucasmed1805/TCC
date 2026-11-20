@@ -27,8 +27,7 @@ const Footer = () => (
         <div>
           <h4 className="font-semibold mb-3 text-accent text-sm">Contato</h4>
           <div className="text-sm text-muted-foreground space-y-1">
-            <p>contato@ceep.edu.br</p>
-            <p>(00) 0000-0000</p>
+            <p>tccmanulucasyuri@gmail.com</p>
           </div>
         </div>
       </div>
