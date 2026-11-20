@@ -55,16 +55,16 @@ const Login = () => {
         <div className="relative z-10 space-y-6">
 
           {/* Logo da instituição */}
-          <div className="bg-white rounded-2xl px-6 py-4 inline-block"
+          <div className="bg-white rounded-3xl p-5 w-fit"
             style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
             <img
               src="/logo.png"
               alt="CEEP Profª Lourdinha Guerra RN"
-              className="h-16 w-auto object-contain"
+              className="h-32 w-auto object-contain"
             />
           </div>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+          <div className="flex w-fit items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
             style={{ background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.3)", color: "#f5a623" }}>
             <GraduationCap style={{ height: 12, width: 12 }} />
             Biblioteca Digital CEEP
