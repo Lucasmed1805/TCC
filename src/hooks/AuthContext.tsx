@@ -23,11 +23,18 @@ interface AuthContextType {
 };
 
 // ================== CONFIGURAÇÃO DO BACKEND ==================
+// Produção (Vercel): usa o mesmo domínio do site ("/api").
+//   Assim o login continua funcionando mesmo se o domínio mudar
+//   (vercel.app, www.ceeprepositorio.com, etc.).
+// Desenvolvimento local: usa VITE_API_URL se existir, senão localhost:8080.
 const getApiUrl = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return `${import.meta.env.VITE_API_URL}/api`;
+  if (import.meta.env.DEV) {
+    if (import.meta.env.VITE_API_URL) {
+      return `${import.meta.env.VITE_API_URL}/api`;
+    }
+    return "http://localhost:8080";
   }
-  return "http://localhost:8080";
+  return "/api";
 };
 
 const API = getApiUrl();
